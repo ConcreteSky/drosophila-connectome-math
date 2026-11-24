@@ -154,15 +154,15 @@ def _train_bitwise_or_class(
         test_pairs = [all_p[i] for i in perm[37:]]
         out_dim = 7
     else:
-        # 0-100: sample 360 training pairs & 120 completely unseen test pairs
+        # 0-100: sample 800 training pairs & 200 completely unseen test pairs
         seen = set()
         train_pairs, test_pairs = [], []
-        while len(train_pairs) < 360:
+        while len(train_pairs) < 800:
             p = (int(rng.integers(0, 101)), int(rng.integers(0, 101)))
             if p not in seen:
                 seen.add(p)
                 train_pairs.append(p)
-        while len(test_pairs) < 120:
+        while len(test_pairs) < 200:
             p = (int(rng.integers(0, 101)), int(rng.integers(0, 101)))
             if p not in seen:
                 seen.add(p)
@@ -196,8 +196,8 @@ def _train_bitwise_or_class(
             return bits
 
         B_tr = _to_bits(Y_tr)
-        lr = 3.0
-        for _ in range(1200):
+        lr = 6.0
+        for _ in range(2500):
             logits = X_tr @ W_out.T
             probs = 1.0 / (1.0 + np.exp(-np.clip(logits, -15.0, 15.0)))
             grad = (B_tr - probs).T @ X_tr / len(Y_tr)
@@ -283,7 +283,7 @@ def main() -> None:
     cx_idx = np.where(region_ids == graph.region_names.index("Central Complex"))[0]
     feat_dim = (len(mb_idx) + len(cx_idx)) * 2 + output_pools.shape[0]
     rng = np.random.default_rng(42)
-    W_kc = rng.normal(0, 1.0 / math.sqrt(max(1, feat_dim)), size=(128, feat_dim)).astype(np.float32)
+    W_kc = rng.normal(0, 1.0 / math.sqrt(max(1, feat_dim)), size=(1024, feat_dim)).astype(np.float32)
 
     w_out_dict = {}
     for task in ("add_3bit", "sub_3bit", "mod_add", "delayed_xor"):
