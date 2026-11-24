@@ -38,6 +38,7 @@ export interface SolveResponse {
 export interface FeedbackResponse {
   reward_applied: number;
   weight_delta_norm: number;
+  total_weight_shift?: number;
   dopamine_pulse: "reward" | "punish";
   total_updates: number;
 }
@@ -46,6 +47,7 @@ export interface TrainStepResponse {
   task: TaskName;
   episodes: number;
   accuracy: number;
+  total_weight_shift?: number;
 }
 
 export interface LesionState {

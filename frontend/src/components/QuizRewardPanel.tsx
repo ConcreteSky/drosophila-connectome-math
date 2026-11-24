@@ -24,7 +24,7 @@ interface QuizRewardPanelProps {
   onTaskChange: (t: TaskName) => void;
   onAChange: (val: number) => void;
   onBChange: (val: number) => void;
-  onRun: (overrideTask?: TaskName, overrideA?: number, overrideB?: number) => void;
+  onRun: (overrideTask?: TaskName, overrideA?: number, overrideB?: number) => Promise<void> | void;
   onFeedbackSuccess: (fb: FeedbackResponse) => void;
 }
 
@@ -40,7 +40,8 @@ export const QuizRewardPanel: React.FC<QuizRewardPanelProps> = ({
   onRun,
   onFeedbackSuccess,
 }) => {
-  const [lastFb, setLastFb] = useState<FeedbackResponse | null>(null);
+  const [totalShift, setTotalShift] = useState<number>(0);
+  const [lastDelta, setLastDelta] = useState<number | null>(null);
   const [trainLoading, setTrainLoading] = useState<boolean>(false);
   const [accHistory, setAccHistory] = useState<number[]>([]);
 
@@ -56,8 +57,11 @@ export const QuizRewardPanel: React.FC<QuizRewardPanelProps> = ({
 
   const handleFeedback = async (reward: 1 | -1) => {
     const fb = await apiClient.feedback(reward);
-    setLastFb(fb);
+    setLastDelta(fb.weight_delta_norm);
+    setTotalShift(fb.total_weight_shift ?? totalShift + fb.weight_delta_norm);
     onFeedbackSuccess(fb);
+    // Immediately re-test the same problem so user sees the brain's new answer
+    await onRun(task, a, b);
   };
 
   const handleAutoTrain = async () => {
@@ -65,6 +69,10 @@ export const QuizRewardPanel: React.FC<QuizRewardPanelProps> = ({
     try {
       const res = await apiClient.trainStep(task, 10);
       setAccHistory((prev) => [...prev, res.accuracy]);
+      if (res.total_weight_shift !== undefined) {
+        setTotalShift(res.total_weight_shift);
+      }
+      await onRun(task, a, b);
     } finally {
       setTrainLoading(false);
     }
@@ -77,7 +85,6 @@ export const QuizRewardPanel: React.FC<QuizRewardPanelProps> = ({
     }
   };
 
-  // Top 4 Answer Candidates sorted by spike votes
   const topCandidates = solveRes
     ? solveRes.output_spike_counts
         .map((spikes, idx) => ({
@@ -93,14 +100,12 @@ export const QuizRewardPanel: React.FC<QuizRewardPanelProps> = ({
     <div className="panel">
       <div className="panel-header">
         <h2 className="panel-title">Ask &amp; Train the Fly Brain</h2>
-        {lastFb && (
-          <span
-            title="How much the brain adjusted its connections after your feedback"
-            style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--text-dim)" }}
-          >
-            Brain Connection Change: {lastFb.weight_delta_norm.toFixed(4)}
-          </span>
-        )}
+        <span
+          className="weight-shift-pill"
+          title="Cumulative magnitude of synaptic weight changes from Reward/Punish updates"
+        >
+          Total Weight Shift: +{totalShift.toFixed(3)}
+        </span>
       </div>
 
       <div className="chips-row" aria-label="Example problems">
@@ -173,7 +178,7 @@ export const QuizRewardPanel: React.FC<QuizRewardPanelProps> = ({
         <>
           <div style={{ marginTop: 10 }}>
             <div className="panel-title" style={{ marginBottom: 6 }}>
-              Top Answer Votes (Motor Neurons)
+              Answer Decision Votes (Top 4 Candidates)
             </div>
             {topCandidates.map((cand, idx) => (
               <div key={cand.label} className="vote-row">
@@ -183,7 +188,7 @@ export const QuizRewardPanel: React.FC<QuizRewardPanelProps> = ({
                     className="vote-fill"
                     style={{
                       width: `${Math.max(4, (cand.spikes / maxVotes) * 100)}%`,
-                      background: idx === 0 ? "var(--spike)" : "#3b4351",
+                      background: idx === 0 ? "var(--spike)" : "#334155",
                     }}
                   />
                 </div>
@@ -194,12 +199,12 @@ export const QuizRewardPanel: React.FC<QuizRewardPanelProps> = ({
             ))}
           </div>
 
-          <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
+          <div style={{ display: "flex", gap: 8, marginTop: 14, alignItems: "center", flexWrap: "wrap" }}>
             <button
               className="btn-reward"
               type="button"
               disabled={busy}
-              title="Send a green dopamine reward (+1) to strengthen active brain paths"
+              title="Reinforce the active brain pathway (+1 dopamine) and re-test"
               onClick={() => handleFeedback(1)}
             >
               Reward (+1)
@@ -208,11 +213,16 @@ export const QuizRewardPanel: React.FC<QuizRewardPanelProps> = ({
               className="btn-punish"
               type="button"
               disabled={busy}
-              title="Send a red punishment (-1) to weaken the wrong answer path"
+              title="Suppress the wrong answer pathway (-1 penalty) and immediately re-test"
               onClick={() => handleFeedback(-1)}
             >
               Punish (-1)
             </button>
+            {lastDelta !== null && (
+              <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--text-dim)" }}>
+                Last step ΔW: {lastDelta.toFixed(4)}
+              </span>
+            )}
           </div>
         </>
       )}

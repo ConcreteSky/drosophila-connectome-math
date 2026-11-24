@@ -118,6 +118,7 @@ class BrainSession:
         return {
             "reward_applied": int(reward),
             "weight_delta_norm": round(delta_norm, 6),
+            "total_weight_shift": round(trainer.total_weight_shift, 4),
             "dopamine_pulse": "reward" if reward > 0 else "punish",
             "total_updates": trainer.total_updates,
         }

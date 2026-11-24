@@ -45,6 +45,16 @@ def test_serverless_health_privacy_and_endpoints() -> None:
 
     fb = feedback(FeedbackRequest(reward=1))
     assert fb["weight_delta_norm"] > 0.0
+    assert fb["total_weight_shift"] > 0.0
+
+    # Behavioral check: punishing a wrong prediction immediately changes the next prediction
+    reset(ResetRequest(mode="fresh"))
+    r1 = solve(SolveRequest(task="add_3bit", a=3, b=5))
+    bad_pred = r1["predicted_answer"]
+    fb_pun = feedback(FeedbackRequest(reward=-1))
+    assert fb_pun["weight_delta_norm"] > 0.0
+    r2 = solve(SolveRequest(task="add_3bit", a=3, b=5))
+    assert r2["predicted_answer"] != bad_pred
 
     tr = train_step(TrainStepRequest(task="sub_3bit", episodes=4))
     assert 0.0 <= tr["accuracy"] <= 1.0

@@ -71,6 +71,7 @@ class SpikingPolicyBase:
         self.b_out = torch.zeros(self.num_classes, dtype=torch.float32, device=self.device)
         self.r_bar = 0.0
         self.total_updates = 0
+        self.total_weight_shift = 0.0
 
         # Plastic synapses: Mushroom Body & Motor/Output postsynaptic targets
         mb_id = brain.region_names.index("Mushroom Body") if "Mushroom Body" in brain.region_names else -1
@@ -240,7 +241,9 @@ class RSTDPTrainer(SpikingPolicyBase):
             self._clamp_dales_law()
 
         self.total_updates += 1
-        return float((self.W_out - old_W).norm().item())
+        delta = float((self.W_out - old_W).norm().item())
+        self.total_weight_shift += delta
+        return delta
 
     def train_step(self, batch_size: int = 32) -> dict:
         _, a_vecs, b_vecs, targets = self.env.sample_batch("train", batch_size=batch_size, rng=self.rng)

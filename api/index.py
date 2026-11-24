@@ -126,10 +126,12 @@ class ServerlessBrainEngine:
         }
         self.r_bar: dict[TaskName, float] = {t: 0.0 for t in self.num_classes}
         self.total_updates = 0
+        self.total_weight_shift = 0.0
         self.active_task: TaskName = "delayed_xor"
         self.cached_feat: Optional[np.ndarray] = None
         self.cached_action: Optional[int] = None
         self.cached_probs: Optional[np.ndarray] = None
+        self.cached_post_spikes: Optional[np.ndarray] = None
 
     def _run_trial(self, task: TaskName, a_vec: np.ndarray, b_vec: np.ndarray, rng: np.random.Generator) -> tuple[np.ndarray, np.ndarray, np.ndarray, dict[str, list[float]], list[list[int]]]:
         T = 60
@@ -223,12 +225,14 @@ class ServerlessBrainEngine:
         self.active_task = task
         t0 = time.perf_counter()
         target, a_vec, b_vec = _make_problem_vecs(task, a, b)
-        rng = np.random.default_rng()
+        # Deterministic trial seed per (task, a, b) so punishment/reward immediately alters behavior on re-test
+        seed_val = (hash((task, int(a), int(b))) & 0x7FFFFFFF)
+        rng = np.random.default_rng(seed_val)
         tot_spk, ro_spk, feat, reg_act, events = self._run_trial(task, a_vec, b_vec, rng)
 
         k_cls = self.num_classes[task]
         logits = self.W_out[task] @ feat
-        exps = np.exp((logits - logits.max()) / 0.5)
+        exps = np.exp((logits - logits.max()) / 0.25)
         probs = exps / exps.sum()
         pred = int(np.argmax(probs))
 
@@ -241,6 +245,7 @@ class ServerlessBrainEngine:
         self.cached_feat = feat
         self.cached_action = pred
         self.cached_probs = probs
+        self.cached_post_spikes = (ro_spk > 0).astype(np.float32)
 
         pred_out = pred - 7 if task == "sub_3bit" else pred
         true_out = target - 7 if task == "sub_3bit" else target
@@ -264,18 +269,32 @@ class ServerlessBrainEngine:
         task = self.active_task
         adv = float(reward) - self.r_bar[task]
         self.r_bar[task] = 0.95 * self.r_bar[task] + 0.05 * float(reward)
-        if abs(adv) < 1e-6:
+        if abs(adv) < 0.25:
             adv = float(reward)
 
         one_hot = np.zeros_like(self.cached_probs)
         one_hot[self.cached_action] = 1.0
-        dW = 0.35 * adv * np.outer(one_hot - self.cached_probs, self.cached_feat)
+        # Strong 3-factor update so 1 punishment visibly suppresses the wrong answer
+        dW = 1.5 * adv * np.outer(one_hot - self.cached_probs, self.cached_feat)
         old_W = self.W_out[task].copy()
         self.W_out[task] = np.clip(self.W_out[task] + dW, -5.0, 5.0)
+        delta_norm = float(np.linalg.norm(self.W_out[task] - old_W))
+
+        # Also modulate active connectome synapses while preserving Dale's Law
+        if self.cached_post_spikes is not None:
+            active_edges = self.cached_post_spikes[self.W_row_idx] > 0
+            edge_signs = np.sign(self.W_data_base[active_edges])
+            self.W_data[active_edges] += 0.01 * adv * edge_signs
+            pos_mask = self.W_data_base >= 0
+            self.W_data[pos_mask] = np.clip(self.W_data[pos_mask], 0.0, 5.0)
+            self.W_data[~pos_mask] = np.clip(self.W_data[~pos_mask], -5.0, 0.0)
+
         self.total_updates += 1
+        self.total_weight_shift += delta_norm
         return {
             "reward_applied": int(reward),
-            "weight_delta_norm": round(float(np.linalg.norm(self.W_out[task] - old_W)), 6),
+            "weight_delta_norm": round(delta_norm, 6),
+            "total_weight_shift": round(self.total_weight_shift, 4),
             "dopamine_pulse": "reward" if reward > 0 else "punish",
             "total_updates": self.total_updates,
         }
@@ -289,7 +308,12 @@ class ServerlessBrainEngine:
             res = self.solve(task, a, b)
             self.feedback(1 if res["is_correct"] else -1)
             correct += int(res["is_correct"])
-        return {"task": task, "episodes": episodes, "accuracy": round(correct / episodes, 4)}
+        return {
+            "task": task,
+            "episodes": episodes,
+            "accuracy": round(correct / episodes, 4),
+            "total_weight_shift": round(self.total_weight_shift, 4),
+        }
 
     def set_lesion(self, mb: bool, cx: bool, hubs: bool) -> dict:
         self.active_mask.fill(True)
@@ -320,6 +344,7 @@ class ServerlessBrainEngine:
         for t in self.W_out:
             self.W_out[t].fill(0.0)
             self.r_bar[t] = 0.0
+        self.total_weight_shift = 0.0
         self.active_mask.fill(True)
         return {"status": "reset", "mode": mode}
 

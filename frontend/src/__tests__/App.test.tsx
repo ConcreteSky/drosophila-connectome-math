@@ -76,6 +76,7 @@ beforeEach(() => {
           JSON.stringify({
             reward_applied: 1,
             weight_delta_norm: 0.1234,
+            total_weight_shift: 0.1234,
             dopamine_pulse: "reward",
             total_updates: 1,
           })
