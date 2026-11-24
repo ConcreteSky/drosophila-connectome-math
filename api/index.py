@@ -116,13 +116,16 @@ class ServerlessBrainEngine:
         self.mb_idx = np.where(self.region_ids == self.region_names.index("Mushroom Body"))[0]
         self.cx_idx = np.where(self.region_ids == self.region_names.index("Central Complex"))[0]
         self.feat_dim = (len(self.mb_idx) + len(self.cx_idx)) * 2 + 15
-        rng = np.random.default_rng(42)
-        self.W_kc = rng.normal(0, 1.0 / math.sqrt(max(1, self.feat_dim)), size=(128, self.feat_dim)).astype(np.float32)
+        self.W_kc = npz["W_kc"].astype(np.float32)
 
         self.num_classes = {"delayed_xor": 2, "add_3bit": 15, "sub_3bit": 15, "mod_add": 7}
+        self.W_out_ckpt: dict[TaskName, np.ndarray] = {
+            t: npz[f"W_out_{t}"].astype(np.float32)
+            for t in self.num_classes
+        }
         self.W_out: dict[TaskName, np.ndarray] = {
-            t: np.zeros((k, self.feat_dim + 128), dtype=np.float32)
-            for t, k in self.num_classes.items()
+            t: self.W_out_ckpt[t].copy()
+            for t in self.num_classes
         }
         self.r_bar: dict[TaskName, float] = {t: 0.0 for t in self.num_classes}
         self.total_updates = 0
@@ -341,9 +344,16 @@ class ServerlessBrainEngine:
         else:
             self.W_indices = self.W_indices_base.copy()
             self.W_data = self.W_data_base.copy()
-        for t in self.W_out:
-            self.W_out[t].fill(0.0)
-            self.r_bar[t] = 0.0
+        if mode == "checkpoint":
+            for t in self.W_out:
+                self.W_out[t] = self.W_out_ckpt[t].copy()
+                self.r_bar[t] = 0.0
+        else:
+            rng_w = np.random.default_rng(7)
+            for t in self.W_out:
+                # Small random symmetry-breaking weights so untrained brain doesn't cycle 0->1->2->3
+                self.W_out[t] = rng_w.normal(0, 0.05, size=self.W_out[t].shape).astype(np.float32)
+                self.r_bar[t] = 0.0
         self.total_weight_shift = 0.0
         self.active_mask.fill(True)
         return {"status": "reset", "mode": mode}
