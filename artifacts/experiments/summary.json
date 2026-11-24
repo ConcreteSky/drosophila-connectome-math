@@ -1,0 +1,79 @@
+{
+  "device": "local_gpu",
+  "smoke_test": true,
+  "tasks": [
+    "delayed_xor"
+  ],
+  "seeds": [
+    0
+  ],
+  "episodes": 10,
+  "by_task_model": [
+    {
+      "task": "delayed_xor",
+      "model_type": "pytorch_gru",
+      "plasticity": "reinforce",
+      "test_acc": 0.4,
+      "mean_spikes": 0.0
+    },
+    {
+      "task": "delayed_xor",
+      "model_type": "real_fly",
+      "plasticity": "reinforce",
+      "test_acc": 0.6,
+      "mean_spikes": 1030.5
+    },
+    {
+      "task": "delayed_xor",
+      "model_type": "real_fly",
+      "plasticity": "rstdp",
+      "test_acc": 0.7,
+      "mean_spikes": 955.6
+    },
+    {
+      "task": "delayed_xor",
+      "model_type": "shuffled_brain",
+      "plasticity": "rstdp",
+      "test_acc": 0.7,
+      "mean_spikes": 958.6
+    }
+  ],
+  "lesions": [
+    {
+      "task": "delayed_xor",
+      "lesion": "central_complex_immediate",
+      "test_acc": 0.0,
+      "mean_spikes": 951.0
+    },
+    {
+      "task": "delayed_xor",
+      "lesion": "central_complex_recovered",
+      "test_acc": 1.0,
+      "mean_spikes": 938.0
+    },
+    {
+      "task": "delayed_xor",
+      "lesion": "hub_top_5pct_immediate",
+      "test_acc": 1.0,
+      "mean_spikes": 0.0
+    },
+    {
+      "task": "delayed_xor",
+      "lesion": "hub_top_5pct_recovered",
+      "test_acc": 1.0,
+      "mean_spikes": 0.0
+    },
+    {
+      "task": "delayed_xor",
+      "lesion": "mushroom_body_immediate",
+      "test_acc": 1.0,
+      "mean_spikes": 964.0
+    },
+    {
+      "task": "delayed_xor",
+      "lesion": "mushroom_body_recovered",
+      "test_acc": 1.0,
+      "mean_spikes": 964.0
+    }
+  ]
+}

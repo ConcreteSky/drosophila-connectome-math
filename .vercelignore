@@ -1,0 +1,9 @@
+.venv/
+data/
+notebooks/
+tests/
+__pycache__/
+.pytest_cache/
+frontend/node_modules/
+*.log
+artifacts/experiments/checkpoints/

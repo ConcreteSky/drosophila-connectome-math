@@ -1,0 +1,67 @@
+{
+  "num_neurons": 138639,
+  "num_edges": 15091983,
+  "trial_ms": 60,
+  "runs": [
+    {
+      "device": "cpu",
+      "device_name": "local_cpu",
+      "batch_size": 1,
+      "trial_latency_ms": 1572.1,
+      "ms_per_episode": 1572.104,
+      "total_spikes": 21428,
+      "spikes_per_sec": 13630.1,
+      "gpu_mem_peak_mb": 0.0
+    },
+    {
+      "device": "cpu",
+      "device_name": "local_cpu",
+      "batch_size": 16,
+      "trial_latency_ms": 5417.78,
+      "ms_per_episode": 338.611,
+      "total_spikes": 342848,
+      "spikes_per_sec": 63282.0,
+      "gpu_mem_peak_mb": 0.0
+    },
+    {
+      "device": "cpu",
+      "device_name": "local_cpu",
+      "batch_size": 64,
+      "trial_latency_ms": 19596.3,
+      "ms_per_episode": 306.192,
+      "total_spikes": 1371392,
+      "spikes_per_sec": 69982.2,
+      "gpu_mem_peak_mb": 0.0
+    },
+    {
+      "device": "cuda",
+      "device_name": "local_gpu",
+      "batch_size": 1,
+      "trial_latency_ms": 129.4,
+      "ms_per_episode": 129.397,
+      "total_spikes": 21424,
+      "spikes_per_sec": 165568.4,
+      "gpu_mem_peak_mb": 330.08
+    },
+    {
+      "device": "cuda",
+      "device_name": "local_gpu",
+      "batch_size": 16,
+      "trial_latency_ms": 11886.21,
+      "ms_per_episode": 742.888,
+      "total_spikes": 342784,
+      "spikes_per_sec": 28838.8,
+      "gpu_mem_peak_mb": 904.25
+    },
+    {
+      "device": "cuda",
+      "device_name": "local_gpu",
+      "batch_size": 64,
+      "trial_latency_ms": 59356.44,
+      "ms_per_episode": 927.444,
+      "total_spikes": 1371136,
+      "spikes_per_sec": 23100.0,
+      "gpu_mem_peak_mb": 2745.96
+    }
+  ]
+}
