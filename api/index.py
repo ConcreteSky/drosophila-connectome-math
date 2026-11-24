@@ -15,7 +15,6 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
 from pydantic import BaseModel, Field
-import scipy.sparse as sp
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 ARTIFACTS_DIR = ROOT_DIR / "artifacts"
@@ -88,12 +87,12 @@ class ServerlessBrainEngine:
         self.summary: dict = meta["summary"]
 
         self.n = len(self.landmarks)
-        self.W_base = sp.csr_matrix(
-            (npz["data"], npz["indices"], npz["indptr"]),
-            shape=(self.n, self.n),
-            dtype=np.float32,
-        )
-        self.W = self.W_base.copy()
+        self.W_indptr = npz["indptr"].astype(np.int32)
+        self.W_indices_base = npz["indices"].astype(np.int32)
+        self.W_data_base = npz["data"].astype(np.float32)
+        self.W_row_idx = np.repeat(np.arange(self.n, dtype=np.int32), np.diff(self.W_indptr))
+        self.W_indices = self.W_indices_base.copy()
+        self.W_data = self.W_data_base.copy()
         self.signs = npz["signs"]
         self.region_ids = npz["region_ids"]
         self.a_pools = npz["a_pools"]
@@ -162,7 +161,11 @@ class ServerlessBrainEngine:
                 mask = rng.random(len(self.go_pool)) < 0.7
                 ext[self.go_pool[mask]] += 46.0
 
-            rec = self.W.dot(last_spk)
+            rec = np.bincount(
+                self.W_row_idx,
+                weights=self.W_data * last_spk[self.W_indices],
+                minlength=self.n,
+            ).astype(np.float32)
             i_syn = self.beta * i_syn + rec + ext
             not_ref = refrac == 0
             v_next = self.alpha * v + (1.0 - self.alpha) * (self.v_rest + i_syn)
@@ -284,7 +287,7 @@ class ServerlessBrainEngine:
         if cx and "Central Complex" in self.region_names:
             self.active_mask[self.region_ids == self.region_names.index("Central Complex")] = False
         if hubs:
-            deg = np.bincount(self.W.indices, minlength=self.n)
+            deg = np.bincount(self.W_indices, minlength=self.n)
             top_k = max(1, int(round(self.n * 0.05)))
             self.active_mask[np.argsort(deg)[-top_k:]] = False
         return {
@@ -297,13 +300,12 @@ class ServerlessBrainEngine:
     def reset(self, mode: Literal["checkpoint", "fresh", "shuffled"]) -> dict:
         if mode == "shuffled":
             rng = np.random.default_rng(123)
-            perm = rng.permutation(self.W_base.nnz)
-            self.W = sp.csr_matrix(
-                (self.W_base.data[perm], self.W_base.indices[perm], self.W_base.indptr),
-                shape=(self.n, self.n),
-            )
+            perm = rng.permutation(len(self.W_data_base))
+            self.W_indices = self.W_indices_base[perm]
+            self.W_data = self.W_data_base[perm]
         else:
-            self.W = self.W_base.copy()
+            self.W_indices = self.W_indices_base.copy()
+            self.W_data = self.W_data_base.copy()
         for t in self.W_out:
             self.W_out[t].fill(0.0)
             self.r_bar[t] = 0.0
