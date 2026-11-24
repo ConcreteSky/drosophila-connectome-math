@@ -90,3 +90,24 @@ def test_reinforce_gru_and_hub_lesion() -> None:
 
     disabled = brain.set_lesion(hub_top_5pct=True)
     assert disabled == max(1, int(round(360 * 0.05)))
+
+
+def test_punishment_prevents_repeating_mistake() -> None:
+    brain, enc = _make_setup(num_neurons=420, num_edges=3000)
+    env = MathTaskEnv(enc, task="add_3bit", split_seed=42)
+    trainer = RSTDPTrainer(brain, env, cfg=TrainingConfig(), seed=42)
+
+    p24 = MathTaskEnv.make_problem("add_3bit", 2, 4, enc.num_a_channels, enc.num_b_channels)
+    p23 = MathTaskEnv.make_problem("add_3bit", 2, 3, enc.num_a_channels, enc.num_b_channels)
+
+    # Bias readout strongly toward 9 even after rewarding 2+4=6, simulating local optimum
+    trainer.b_out[9] = 4.0
+    trainer.solve_single(p24)
+    trainer.apply_feedback(1.0)
+
+    out1 = trainer.solve_single(p23)
+    assert out1.predicted == 9
+    trainer.apply_feedback(-1.0)
+
+    out2 = trainer.solve_single(p23)
+    assert out2.predicted != 9

@@ -26,12 +26,12 @@ TaskName = Literal["delayed_xor", "add_3bit", "sub_3bit", "mod_add"]
 
 class SolveRequest(BaseModel):
     task: TaskName = "delayed_xor"
-    a: int = Field(1, ge=0, le=7)
-    b: int = Field(0, ge=0, le=7)
+    a: int = Field(1, ge=0, le=100)
+    b: int = Field(0, ge=0, le=100)
 
     @model_validator(mode="after")
     def validate_ranges(self) -> "SolveRequest":
-        limits = {"delayed_xor": 1, "add_3bit": 7, "sub_3bit": 7, "mod_add": 6}
+        limits = {"delayed_xor": 1, "add_3bit": 100, "sub_3bit": 100, "mod_add": 6}
         mx = limits[self.task]
         if self.a > mx or self.b > mx:
             raise ValueError(f"For {self.task}, a and b must be between 0 and {mx}.")
@@ -58,27 +58,25 @@ class ResetRequest(BaseModel):
 
 
 def _make_problem_vecs(task: TaskName, a: int, b: int) -> tuple[int, np.ndarray, np.ndarray]:
-    a_vec = np.zeros(7, dtype=np.float32)
-    b_vec = np.zeros(7, dtype=np.float32)
+    a_vec = np.zeros(14, dtype=np.float32)
+    b_vec = np.zeros(14, dtype=np.float32)
     if task == "delayed_xor":
         av, bv = int(a) & 1, int(b) & 1
-        target = av ^ bv
         a_vec[0], a_vec[1] = float(av), float(1 - av)
         b_vec[0], b_vec[1] = float(bv), float(1 - bv)
-        return target, a_vec, b_vec
+        return av ^ bv, a_vec, b_vec
     if task in ("add_3bit", "sub_3bit"):
-        av, bv = max(0, min(7, int(a))), max(0, min(7, int(b)))
-        target = (av + bv) if task == "add_3bit" else (av - bv + 7)
-        for bit in range(3):
+        av, bv = max(0, min(100, int(a))), max(0, min(100, int(b)))
+        target = (av + bv) if task == "add_3bit" else (av - bv)
+        for bit in range(7):
             ba, bb = (av >> bit) & 1, (bv >> bit) & 1
             a_vec[2 * bit], a_vec[2 * bit + 1] = float(ba), float(1 - ba)
             b_vec[2 * bit], b_vec[2 * bit + 1] = float(bb), float(1 - bb)
         return target, a_vec, b_vec
     av, bv = int(a) % 7, int(b) % 7
-    target = (av + bv) % 7
     a_vec[av] = 1.0
     b_vec[bv] = 1.0
-    return target, a_vec, b_vec
+    return (av + bv) % 7, a_vec, b_vec
 
 
 class ServerlessBrainEngine:
@@ -115,10 +113,10 @@ class ServerlessBrainEngine:
         # Per-task linear readout over [early_rates, readout_rates, motor_counts]
         self.mb_idx = np.where(self.region_ids == self.region_names.index("Mushroom Body"))[0]
         self.cx_idx = np.where(self.region_ids == self.region_names.index("Central Complex"))[0]
-        self.feat_dim = (len(self.mb_idx) + len(self.cx_idx)) * 2 + 15
+        self.feat_dim = (len(self.mb_idx) + len(self.cx_idx)) * 2 + self.output_pools.shape[0]
         self.W_kc = npz["W_kc"].astype(np.float32)
 
-        self.num_classes = {"delayed_xor": 2, "add_3bit": 15, "sub_3bit": 15, "mod_add": 7}
+        self.num_classes = {"delayed_xor": 2, "add_3bit": 9, "sub_3bit": 9, "mod_add": 7}
         self.W_out_ckpt: dict[TaskName, np.ndarray] = {
             t: npz[f"W_out_{t}"].astype(np.float32)
             for t in self.num_classes
@@ -203,8 +201,8 @@ class ServerlessBrainEngine:
         early = tot_spk - ro_spk
         r_len = max(1, 60 - ro_start)
         e_len = max(1, ro_start)
-        m_counts = np.zeros(15, dtype=np.float32)
-        for k in range(15):
+        m_counts = np.zeros(self.output_pools.shape[0], dtype=np.float32)
+        for k in range(self.output_pools.shape[0]):
             valid = self.output_pools[k]
             valid = valid[valid >= 0]
             if len(valid):
@@ -229,35 +227,41 @@ class ServerlessBrainEngine:
         t0 = time.perf_counter()
         target, a_vec, b_vec = _make_problem_vecs(task, a, b)
         task_ids = {"delayed_xor": 1, "add_3bit": 2, "sub_3bit": 3, "mod_add": 4}
-        seed_val = task_ids.get(task, 0) * 1000 + int(a) * 31 + int(b)
+        seed_val = task_ids.get(task, 0) * 100000 + int(a) * 131 + int(b)
         rng = np.random.default_rng(seed_val)
         tot_spk, ro_spk, feat, reg_act, events = self._run_trial(task, a_vec, b_vec, rng)
 
         k_cls = self.num_classes[task]
         logits = self.W_out[task] @ feat
-        exps = np.exp((logits - logits.max()) / 0.25)
-        probs = exps / exps.sum()
-        pred = int(np.argmax(probs))
-
-        out_counts = []
-        for k in range(k_cls):
-            valid = self.output_pools[k]
-            valid = valid[valid >= 0]
-            out_counts.append(round(float(ro_spk[valid].mean()) if len(valid) else 0.0, 3))
+        if task in ("add_3bit", "sub_3bit"):
+            probs = 1.0 / (1.0 + np.exp(-np.clip(logits, -15.0, 15.0)))
+            pred_bits = (probs >= 0.5).astype(np.int64)
+            mag = sum(int(pred_bits[k]) << k for k in range(8))
+            pred_out = -mag if pred_bits[8] == 1 else mag
+            true_out = target
+            labels = [f"bit{k}" for k in range(8)] + ["sign"]
+            out_counts = [round(float(p) * 100.0, 1) for p in probs]
+        else:
+            exps = np.exp((logits - logits.max()) / 0.25)
+            probs = exps / exps.sum()
+            pred_out = int(np.argmax(probs))
+            true_out = target
+            labels = [str(i) for i in range(k_cls)]
+            out_counts = []
+            for k in range(k_cls):
+                valid = self.output_pools[k]
+                valid = valid[valid >= 0]
+                out_counts.append(round(float(ro_spk[valid].mean()) if len(valid) else 0.0, 3))
 
         self.cached_feat = feat
-        self.cached_action = pred
+        self.cached_action = pred_out
         self.cached_probs = probs
         self.cached_post_spikes = (ro_spk > 0).astype(np.float32)
-
-        pred_out = pred - 7 if task == "sub_3bit" else pred
-        true_out = target - 7 if task == "sub_3bit" else target
-        labels = [str(i - 7) for i in range(15)] if task == "sub_3bit" else [str(i) for i in range(k_cls)]
 
         return {
             "predicted_answer": pred_out,
             "true_answer": true_out,
-            "is_correct": pred == target,
+            "is_correct": pred_out == true_out,
             "answer_labels": labels,
             "output_spike_counts": out_counts,
             "total_spikes": int(tot_spk.sum()),
@@ -275,10 +279,13 @@ class ServerlessBrainEngine:
         if abs(adv) < 0.25:
             adv = float(reward)
 
-        one_hot = np.zeros_like(self.cached_probs)
-        one_hot[self.cached_action] = 1.0
-        # Strong 3-factor update so 1 punishment visibly suppresses the wrong answer
-        dW = 1.5 * adv * np.outer(one_hot - self.cached_probs, self.cached_feat)
+        if task in ("add_3bit", "sub_3bit"):
+            pred_bits = (self.cached_probs >= 0.5).astype(np.float32)
+            dW = 1.5 * adv * np.outer(pred_bits - self.cached_probs, self.cached_feat)
+        else:
+            one_hot = np.zeros_like(self.cached_probs)
+            one_hot[self.cached_action] = 1.0
+            dW = 1.5 * adv * np.outer(one_hot - self.cached_probs, self.cached_feat)
         old_W = self.W_out[task].copy()
         self.W_out[task] = np.clip(self.W_out[task] + dW, -5.0, 5.0)
         delta_norm = float(np.linalg.norm(self.W_out[task] - old_W))

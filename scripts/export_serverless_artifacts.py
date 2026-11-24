@@ -1,4 +1,8 @@
-"""Export lightweight NumPy/SciPy `.npz` & `.json` artifacts with trained R-STDP weights."""
+"""Export lightweight NumPy `.npz` & `.json` artifacts with 0-100 bit-coded R-STDP weights.
+
+Trains strictly on a sampled training subset and evaluates on unseen (A, B) pairs
+so reported generalization is never memorized.
+"""
 
 from __future__ import annotations
 
@@ -17,27 +21,27 @@ from flybrain_rl.projection import DorsalProjection
 
 
 def _make_problem_vecs(task: str, a: int, b: int) -> tuple[int, np.ndarray, np.ndarray]:
-    a_vec = np.zeros(7, dtype=np.float32)
-    b_vec = np.zeros(7, dtype=np.float32)
+    a_vec = np.zeros(14, dtype=np.float32)
+    b_vec = np.zeros(14, dtype=np.float32)
     if task == "delayed_xor":
         av, bv = int(a) & 1, int(b) & 1
-        target = av ^ bv
         a_vec[0], a_vec[1] = float(av), float(1 - av)
         b_vec[0], b_vec[1] = float(bv), float(1 - bv)
-        return target, a_vec, b_vec
+        return av ^ bv, a_vec, b_vec
     if task in ("add_3bit", "sub_3bit"):
-        av, bv = max(0, min(7, int(a))), max(0, min(7, int(b)))
-        target = (av + bv) if task == "add_3bit" else (av - bv + 7)
-        for bit in range(3):
-            ba, bb = (av >> bit) & 1, (bv >> bit) & 1
+        av = max(0, min(100, int(a)))
+        bv = max(0, min(100, int(b)))
+        target = (av + bv) if task == "add_3bit" else (av - bv)
+        for bit in range(7):
+            ba = (av >> bit) & 1
+            bb = (bv >> bit) & 1
             a_vec[2 * bit], a_vec[2 * bit + 1] = float(ba), float(1 - ba)
             b_vec[2 * bit], b_vec[2 * bit + 1] = float(bb), float(1 - bb)
         return target, a_vec, b_vec
     av, bv = int(a) % 7, int(b) % 7
-    target = (av + bv) % 7
     a_vec[av] = 1.0
     b_vec[bv] = 1.0
-    return target, a_vec, b_vec
+    return (av + bv) % 7, a_vec, b_vec
 
 
 def _run_subnetwork_trial(
@@ -56,7 +60,7 @@ def _run_subnetwork_trial(
 ) -> tuple[int, np.ndarray]:
     target, a_vec, b_vec = _make_problem_vecs(task, a, b)
     task_ids = {"delayed_xor": 1, "add_3bit": 2, "sub_3bit": 3, "mod_add": 4}
-    rng = np.random.default_rng(task_ids.get(task, 0) * 1000 + int(a) * 31 + int(b))
+    rng = np.random.default_rng(task_ids.get(task, 0) * 100000 + int(a) * 131 + int(b))
     T = 60
     a_end = 15 if task == "delayed_xor" else 30
     b_start, b_end = (30, 45) if task == "delayed_xor" else (0, 30)
@@ -104,8 +108,8 @@ def _run_subnetwork_trial(
     early = tot_spk - ro_spk
     r_len = max(1, 60 - ro_start)
     e_len = max(1, ro_start)
-    m_counts = np.zeros(15, dtype=np.float32)
-    for k in range(15):
+    m_counts = np.zeros(output_pools.shape[0], dtype=np.float32)
+    for k in range(output_pools.shape[0]):
         valid = output_pools[k][output_pools[k] >= 0]
         if len(valid):
             m_counts[k] = ro_spk[valid].mean()
@@ -126,7 +130,7 @@ def _run_subnetwork_trial(
     return target, feat
 
 
-def _train_task_weights(
+def _train_bitwise_or_class(
     W: sp.csr_matrix,
     n: int,
     a_pools: np.ndarray,
@@ -138,44 +142,91 @@ def _train_task_weights(
     W_kc: np.ndarray,
     task: str,
 ) -> np.ndarray:
+    rng = np.random.default_rng(123)
     if task == "delayed_xor":
-        pairs = [(a, b) for a in range(2) for b in range(2)]
-        k_cls = 2
-    elif task in ("add_3bit", "sub_3bit"):
-        pairs = [(a, b) for a in range(8) for b in range(8)]
-        k_cls = 15
+        train_pairs = [(0, 0), (0, 1), (1, 0)]
+        test_pairs = [(1, 1)]
+        out_dim = 2
+    elif task == "mod_add":
+        all_p = [(a, b) for a in range(7) for b in range(7)]
+        perm = rng.permutation(len(all_p))
+        train_pairs = [all_p[i] for i in perm[:37]]
+        test_pairs = [all_p[i] for i in perm[37:]]
+        out_dim = 7
     else:
-        pairs = [(a, b) for a in range(7) for b in range(7)]
-        k_cls = 7
+        # 0-100: sample 360 training pairs & 120 completely unseen test pairs
+        seen = set()
+        train_pairs, test_pairs = [], []
+        while len(train_pairs) < 360:
+            p = (int(rng.integers(0, 101)), int(rng.integers(0, 101)))
+            if p not in seen:
+                seen.add(p)
+                train_pairs.append(p)
+        while len(test_pairs) < 120:
+            p = (int(rng.integers(0, 101)), int(rng.integers(0, 101)))
+            if p not in seen:
+                seen.add(p)
+                test_pairs.append(p)
+        # 9 output bits for add_3bit/sub_3bit: 8 magnitude bits + 1 sign bit
+        out_dim = 9
 
-    # Collect real spiking reservoir features for every pair
-    feats = []
-    targets = []
-    for a, b in pairs:
-        tgt, ft = _run_subnetwork_trial(
-            W, n, a_pools, b_pools, go_pool, output_pools, mb_idx, cx_idx, W_kc, task, a, b
-        )
-        feats.append(ft)
-        targets.append(tgt)
-    X = np.stack(feats, axis=0)  # [M, D]
-    Y = np.array(targets, dtype=np.int64)
+    def _collect(pairs):
+        feats, tgts = [], []
+        for a, b in pairs:
+            tgt, ft = _run_subnetwork_trial(
+                W, n, a_pools, b_pools, go_pool, output_pools, mb_idx, cx_idx, W_kc, task, a, b
+            )
+            feats.append(ft)
+            tgts.append(tgt)
+        return np.stack(feats, axis=0), np.array(tgts, dtype=np.int64)
 
-    # Train W_out via 3-factor reward/punishment updates over spiking features
-    W_out = np.zeros((k_cls, X.shape[1]), dtype=np.float32)
-    lr = 4.0
-    for _ in range(1500):
-        logits = X @ W_out.T
-        exps = np.exp((logits - logits.max(axis=1, keepdims=True)) / 0.25)
-        probs = exps / exps.sum(axis=1, keepdims=True)
-        one_hot = np.zeros_like(probs)
-        one_hot[np.arange(len(Y)), Y] = 1.0
-        # Reward (+1) correct pathway, punish (-1) wrong probabilities
-        grad = (one_hot - probs).T @ X / len(Y)
-        W_out = np.clip(W_out + lr * grad, -5.0, 5.0)
+    X_tr, Y_tr = _collect(train_pairs)
+    X_te, Y_te = _collect(test_pairs)
 
-    preds = np.argmax(X @ W_out.T, axis=1)
-    acc = float((preds == Y).mean())
-    print(f"[train] {task}: {len(pairs)} pairs -> accuracy={acc * 100:.1f}%")
+    W_out = np.zeros((out_dim, X_tr.shape[1]), dtype=np.float32)
+
+    if task in ("add_3bit", "sub_3bit"):
+        # Bit-wise binary targets: 8 magnitude bits (0..200) + sign bit
+        def _to_bits(y: np.ndarray) -> np.ndarray:
+            bits = np.zeros((len(y), 9), dtype=np.float32)
+            mag = np.abs(y)
+            for k in range(8):
+                bits[:, k] = (mag >> k) & 1
+            bits[:, 8] = (y < 0).astype(np.float32)
+            return bits
+
+        B_tr = _to_bits(Y_tr)
+        lr = 3.0
+        for _ in range(1200):
+            logits = X_tr @ W_out.T
+            probs = 1.0 / (1.0 + np.exp(-np.clip(logits, -15.0, 15.0)))
+            grad = (B_tr - probs).T @ X_tr / len(Y_tr)
+            W_out = np.clip(W_out + lr * grad, -5.0, 5.0)
+
+        def _decode_int(X_in: np.ndarray) -> np.ndarray:
+            probs = 1.0 / (1.0 + np.exp(-np.clip(X_in @ W_out.T, -15.0, 15.0)))
+            pred_bits = (probs >= 0.5).astype(np.int64)
+            mag = np.zeros(len(X_in), dtype=np.int64)
+            for k in range(8):
+                mag += pred_bits[:, k] << k
+            return np.where(pred_bits[:, 8] == 1, -mag, mag)
+
+        tr_acc = float((_decode_int(X_tr) == Y_tr).mean())
+        te_acc = float((_decode_int(X_te) == Y_te).mean())
+    else:
+        lr = 4.0
+        for _ in range(1200):
+            logits = X_tr @ W_out.T
+            exps = np.exp((logits - logits.max(axis=1, keepdims=True)) / 0.25)
+            probs = exps / exps.sum(axis=1, keepdims=True)
+            oh = np.zeros_like(probs)
+            oh[np.arange(len(Y_tr)), Y_tr] = 1.0
+            W_out = np.clip(W_out + lr * ((oh - probs).T @ X_tr / len(Y_tr)), -5.0, 5.0)
+
+        tr_acc = float((np.argmax(X_tr @ W_out.T, axis=1) == Y_tr).mean())
+        te_acc = float((np.argmax(X_te @ W_out.T, axis=1) == Y_te).mean())
+
+    print(f"[train] {task}: train={tr_acc * 100:.1f}% ({len(Y_tr)} pairs) | unseen_test={te_acc * 100:.1f}% ({len(Y_te)} pairs)")
     return W_out
 
 
@@ -190,7 +241,10 @@ def main() -> None:
         sensory_indices=brain.get_top_out_degree_indices("Sensory", top_k=1500),
         output_indices=brain.get_region_indices("Motor/Output"),
         device=torch.device("cpu"),
-        neurons_per_pool=64,
+        num_a_channels=14,
+        num_b_channels=14,
+        neurons_per_pool=32,
+        max_classes=18,
         seed=42,
     )
     proj = DorsalProjection.build(graph, enc, num_landmarks=3000, seed=42)
@@ -227,13 +281,13 @@ def main() -> None:
 
     mb_idx = np.where(region_ids == graph.region_names.index("Mushroom Body"))[0]
     cx_idx = np.where(region_ids == graph.region_names.index("Central Complex"))[0]
-    feat_dim = (len(mb_idx) + len(cx_idx)) * 2 + 15
+    feat_dim = (len(mb_idx) + len(cx_idx)) * 2 + output_pools.shape[0]
     rng = np.random.default_rng(42)
     W_kc = rng.normal(0, 1.0 / math.sqrt(max(1, feat_dim)), size=(128, feat_dim)).astype(np.float32)
 
     w_out_dict = {}
     for task in ("add_3bit", "sub_3bit", "mod_add", "delayed_xor"):
-        w_out_dict[f"W_out_{task}"] = _train_task_weights(
+        w_out_dict[f"W_out_{task}"] = _train_bitwise_or_class(
             sub_csr, N_sub, a_pools, b_pools, go_pool, output_pools, mb_idx, cx_idx, W_kc, task
         )
 

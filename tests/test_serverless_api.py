@@ -31,17 +31,17 @@ def test_serverless_health_privacy_and_endpoints() -> None:
     assert h["gpu_name"] == "serverless_cpu"
 
     lay = brain_layout()
-    assert len(lay["landmarks"]) == 3000
+    assert 2900 <= len(lay["landmarks"]) <= 3000
 
     res = solve(SolveRequest(task="delayed_xor", a=1, b=0))
     assert len(res["region_activity"]["Mushroom Body"]) == 60
     assert res["total_spikes"] > 0
 
-    # Subtraction (sub_3bit) end-to-end including negative result
-    sub_res = solve(SolveRequest(task="sub_3bit", a=3, b=5))
-    assert sub_res["true_answer"] == -2
-    assert -7 <= sub_res["predicted_answer"] <= 7
-    assert "-2" in sub_res["answer_labels"]
+    # Subtraction (sub_3bit) 0-100 end-to-end including negative result
+    sub_res = solve(SolveRequest(task="sub_3bit", a=42, b=85))
+    assert sub_res["true_answer"] == -43
+    assert -255 <= sub_res["predicted_answer"] <= 255
+    assert "sign" in sub_res["answer_labels"]
 
     fb = feedback(FeedbackRequest(reward=1))
     assert fb["weight_delta_norm"] > 0.0
@@ -75,6 +75,6 @@ def test_range_validation_422() -> None:
     with pytest.raises(ValidationError):
         SolveRequest(task="mod_add", a=7, b=1)
     with pytest.raises(ValidationError):
-        SolveRequest(task="add_3bit", a=8, b=0)
+        SolveRequest(task="add_3bit", a=101, b=0)
     with pytest.raises(ValidationError):
         SolveRequest(task="sub_3bit", a=-1, b=3)

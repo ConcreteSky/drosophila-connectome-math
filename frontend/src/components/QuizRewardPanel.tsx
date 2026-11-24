@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import { apiClient, FeedbackResponse, SolveResponse, TaskName } from "../api/client";
 
 export const TASK_LIMITS: Record<TaskName, { max: number; label: string; op: string }> = {
-  add_3bit: { max: 7, label: "Addition (A + B)", op: "+" },
-  sub_3bit: { max: 7, label: "Subtraction (A - B)", op: "-" },
+  add_3bit: { max: 100, label: "Addition (A + B)", op: "+" },
+  sub_3bit: { max: 100, label: "Subtraction (A - B)", op: "-" },
   mod_add: { max: 6, label: "Modular Math ((A + B) mod 7)", op: "+ (mod 7)" },
   delayed_xor: { max: 1, label: "Logic Gate (A XOR B)", op: "XOR" },
 };
 
 const EXAMPLES: { label: string; task: TaskName; a: number; b: number }[] = [
-  { label: "3 + 5", task: "add_3bit", a: 3, b: 5 },
-  { label: "6 - 2", task: "sub_3bit", a: 6, b: 2 },
+  { label: "42 + 37", task: "add_3bit", a: 42, b: 37 },
+  { label: "85 - 29", task: "sub_3bit", a: 85, b: 29 },
   { label: "(4 + 5) mod 7", task: "mod_add", a: 4, b: 5 },
   { label: "1 XOR 0", task: "delayed_xor", a: 1, b: 0 },
 ];

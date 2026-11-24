@@ -94,10 +94,10 @@ describe("Drosophila Fly Brain Plain-English UI", () => {
       expect(screen.getByText(/serverless_cpu/i)).toBeInTheDocument();
     });
 
-    const inputA = screen.getByLabelText(/A \(0–7\)/i) as HTMLInputElement;
-    // Out-of-range input gets clamped to 7
-    fireEvent.change(inputA, { target: { value: "99" } });
-    expect(inputA.value).toBe("7");
+    const inputA = screen.getByLabelText(/A \(0–100\)/i) as HTMLInputElement;
+    // Out-of-range input gets clamped to 100
+    fireEvent.change(inputA, { target: { value: "999" } });
+    expect(inputA.value).toBe("100");
 
     // Switching to XOR clamps A and B to 0-1
     const select = screen.getByLabelText("Operation") as HTMLSelectElement;
