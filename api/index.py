@@ -228,8 +228,8 @@ class ServerlessBrainEngine:
         self.active_task = task
         t0 = time.perf_counter()
         target, a_vec, b_vec = _make_problem_vecs(task, a, b)
-        # Deterministic trial seed per (task, a, b) so punishment/reward immediately alters behavior on re-test
-        seed_val = (hash((task, int(a), int(b))) & 0x7FFFFFFF)
+        task_ids = {"delayed_xor": 1, "add_3bit": 2, "sub_3bit": 3, "mod_add": 4}
+        seed_val = task_ids.get(task, 0) * 1000 + int(a) * 31 + int(b)
         rng = np.random.default_rng(seed_val)
         tot_spk, ro_spk, feat, reg_act, events = self._run_trial(task, a_vec, b_vec, rng)
 

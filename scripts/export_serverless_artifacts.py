@@ -55,7 +55,8 @@ def _run_subnetwork_trial(
     b: int,
 ) -> tuple[int, np.ndarray]:
     target, a_vec, b_vec = _make_problem_vecs(task, a, b)
-    rng = np.random.default_rng((hash((task, int(a), int(b))) & 0x7FFFFFFF))
+    task_ids = {"delayed_xor": 1, "add_3bit": 2, "sub_3bit": 3, "mod_add": 4}
+    rng = np.random.default_rng(task_ids.get(task, 0) * 1000 + int(a) * 31 + int(b))
     T = 60
     a_end = 15 if task == "delayed_xor" else 30
     b_start, b_end = (30, 45) if task == "delayed_xor" else (0, 30)
