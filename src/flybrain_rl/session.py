@@ -47,7 +47,7 @@ class BrainSession:
         self.reinforce: dict[TaskName, REINFORCETrainer] = {}
         self.checkpoint_loaded = False
 
-        for task in ("delayed_xor", "add_3bit", "mod_add"):
+        for task in ("delayed_xor", "add_3bit", "sub_3bit", "mod_add"):
             env_t = MathTaskEnv(self.encoder, task=task, split_seed=42)
             tr_r = RSTDPTrainer(self.brain, env_t, cfg=self.cfg, seed=42)
             tr_f = REINFORCETrainer(self.brain, env_t, cfg=self.cfg, seed=42)
@@ -97,10 +97,14 @@ class BrainSession:
         if self.device == "cuda":
             torch.cuda.synchronize()
         latency_ms = (time.perf_counter() - t0) * 1000.0
+        pred = out.predicted - 7 if task == "sub_3bit" else out.predicted
+        true_ans = out.true_answer - 7 if task == "sub_3bit" else out.true_answer
+        labels = [str(i - 7) for i in range(15)] if task == "sub_3bit" else [str(i) for i in range(len(out.output_spike_counts))]
         return {
-            "predicted_answer": out.predicted,
-            "true_answer": out.true_answer,
+            "predicted_answer": pred,
+            "true_answer": true_ans,
             "is_correct": out.is_correct,
+            "answer_labels": labels,
             "output_spike_counts": out.output_spike_counts,
             "total_spikes": out.total_spikes,
             "latency_ms": round(latency_ms, 2),

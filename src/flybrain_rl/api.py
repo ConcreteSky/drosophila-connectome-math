@@ -6,7 +6,7 @@ from typing import Literal, Optional
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from flybrain_rl.session import BrainSession
 from flybrain_rl.tasks import TaskName
@@ -16,6 +16,14 @@ class SolveRequest(BaseModel):
     task: TaskName = "delayed_xor"
     a: int = Field(1, ge=0, le=7)
     b: int = Field(0, ge=0, le=7)
+
+    @model_validator(mode="after")
+    def validate_ranges(self) -> "SolveRequest":
+        limits = {"delayed_xor": 1, "add_3bit": 7, "sub_3bit": 7, "mod_add": 6}
+        mx = limits[self.task]
+        if self.a > mx or self.b > mx:
+            raise ValueError(f"For {self.task}, a and b must be between 0 and {mx}.")
+        return self
 
 
 class FeedbackRequest(BaseModel):

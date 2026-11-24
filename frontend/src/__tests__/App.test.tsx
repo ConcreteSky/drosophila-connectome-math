@@ -14,9 +14,9 @@ beforeEach(() => {
         new Response(
           JSON.stringify({
             status: "ok",
-            device: "local_gpu",
-            gpu_name: "local_gpu",
-            gpu_mem_allocated_mb: 330,
+            device: "serverless_cpu",
+            gpu_name: "serverless_cpu",
+            gpu_mem_allocated_mb: 0,
             gpu_mem_total_mb: 0,
             checkpoint_loaded: true,
           })
@@ -57,12 +57,13 @@ beforeEach(() => {
       return Promise.resolve(
         new Response(
           JSON.stringify({
-            predicted_answer: 1,
-            true_answer: 1,
+            predicted_answer: 8,
+            true_answer: 8,
             is_correct: true,
-            output_spike_counts: [1.0, 4.5],
+            answer_labels: Array.from({ length: 15 }, (_, i) => String(i)),
+            output_spike_counts: Array.from({ length: 15 }, (_, i) => (i === 8 ? 42 : 5)),
             total_spikes: 1200,
-            latency_ms: 125.0,
+            latency_ms: 45.0,
             region_activity: { Sensory: Array(60).fill(10) },
             spike_events: [[0, 5]],
           })
@@ -85,21 +86,44 @@ beforeEach(() => {
   });
 });
 
-describe("Drosophila Connectome App", () => {
-  it("renders header, solves problem, and applies reward", async () => {
+describe("Drosophila Fly Brain Plain-English UI", () => {
+  it("clamps keyboard inputs per task, submits on Enter, and applies reward", async () => {
     render(<App />);
     await waitFor(() => {
-      expect(screen.getByText(/local_gpu/i)).toBeInTheDocument();
+      expect(screen.getByText(/serverless_cpu/i)).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByText("Run Brain"));
+    const inputA = screen.getByLabelText(/A \(0–7\)/i) as HTMLInputElement;
+    // Out-of-range input gets clamped to 7
+    fireEvent.change(inputA, { target: { value: "99" } });
+    expect(inputA.value).toBe("7");
+
+    // Switching to XOR clamps A and B to 0-1
+    const select = screen.getByLabelText("Operation") as HTMLSelectElement;
+    fireEvent.change(select, { target: { value: "delayed_xor" } });
+    expect(screen.getByLabelText(/A \(0–1\)/i)).toHaveValue(1);
+
+    // Switching to mod_add caps at 0-6
+    fireEvent.change(select, { target: { value: "mod_add" } });
+    fireEvent.change(screen.getByLabelText(/A \(0–6\)/i), { target: { value: "10" } });
+    expect((screen.getByLabelText(/A \(0–6\)/i) as HTMLInputElement).value).toBe("6");
+
+    // Enter key submits solve
+    fireEvent.keyDown(screen.getByLabelText(/A \(0–6\)/i), { key: "Enter", code: "Enter" });
     await waitFor(() => {
-      expect(screen.getByText("Reward (+1)")).toBeInTheDocument();
+      expect(screen.getByText(/Correct ✓/i)).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByText("Reward (+1)"));
+    // Reward (+1) triggers dopamine pulse
+    fireEvent.click(screen.getByRole("button", { name: "Reward (+1)" }));
     await waitFor(() => {
       expect(screen.getByText(/DOPAMINE \+1 REWARD/i)).toBeInTheDocument();
     });
+
+    // 3-tab navigation works
+    fireEvent.click(screen.getByText(/2\. Brain Damage Lab/i));
+    expect(screen.getByText(/Turn Off Brain Regions/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByText(/3\. Science & Benchmarks/i));
+    expect(screen.getByText(/Scientific Controls & Connectome Telemetry/i)).toBeInTheDocument();
   });
 });

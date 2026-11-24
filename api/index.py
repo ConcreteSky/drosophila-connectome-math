@@ -14,20 +14,28 @@ from typing import Literal, Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import numpy as np
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 ARTIFACTS_DIR = ROOT_DIR / "artifacts"
 SERVERLESS_DIR = ARTIFACTS_DIR / "serverless"
 EXPERIMENTS_DIR = ARTIFACTS_DIR / "experiments"
 
-TaskName = Literal["delayed_xor", "add_3bit", "mod_add"]
+TaskName = Literal["delayed_xor", "add_3bit", "sub_3bit", "mod_add"]
 
 
 class SolveRequest(BaseModel):
     task: TaskName = "delayed_xor"
     a: int = Field(1, ge=0, le=7)
     b: int = Field(0, ge=0, le=7)
+
+    @model_validator(mode="after")
+    def validate_ranges(self) -> "SolveRequest":
+        limits = {"delayed_xor": 1, "add_3bit": 7, "sub_3bit": 7, "mod_add": 6}
+        mx = limits[self.task]
+        if self.a > mx or self.b > mx:
+            raise ValueError(f"For {self.task}, a and b must be between 0 and {mx}.")
+        return self
 
 
 class FeedbackRequest(BaseModel):
@@ -53,16 +61,14 @@ def _make_problem_vecs(task: TaskName, a: int, b: int) -> tuple[int, np.ndarray,
     a_vec = np.zeros(7, dtype=np.float32)
     b_vec = np.zeros(7, dtype=np.float32)
     if task == "delayed_xor":
-        av, bv = int(a) & 3, int(b) & 1
-        a0, a1 = av & 1, (av >> 1) & 1
-        target = a0 ^ a1 ^ bv
-        a_vec[0], a_vec[1] = float(a0), float(1 - a0)
-        a_vec[2], a_vec[3] = float(a1), float(1 - a1)
+        av, bv = int(a) & 1, int(b) & 1
+        target = av ^ bv
+        a_vec[0], a_vec[1] = float(av), float(1 - av)
         b_vec[0], b_vec[1] = float(bv), float(1 - bv)
         return target, a_vec, b_vec
-    if task == "add_3bit":
+    if task in ("add_3bit", "sub_3bit"):
         av, bv = max(0, min(7, int(a))), max(0, min(7, int(b)))
-        target = av + bv
+        target = (av + bv) if task == "add_3bit" else (av - bv + 7)
         for bit in range(3):
             ba, bb = (av >> bit) & 1, (bv >> bit) & 1
             a_vec[2 * bit], a_vec[2 * bit + 1] = float(ba), float(1 - ba)
@@ -113,7 +119,7 @@ class ServerlessBrainEngine:
         rng = np.random.default_rng(42)
         self.W_kc = rng.normal(0, 1.0 / math.sqrt(max(1, self.feat_dim)), size=(128, self.feat_dim)).astype(np.float32)
 
-        self.num_classes = {"delayed_xor": 2, "add_3bit": 15, "mod_add": 7}
+        self.num_classes = {"delayed_xor": 2, "add_3bit": 15, "sub_3bit": 15, "mod_add": 7}
         self.W_out: dict[TaskName, np.ndarray] = {
             t: np.zeros((k, self.feat_dim + 128), dtype=np.float32)
             for t, k in self.num_classes.items()
@@ -236,10 +242,15 @@ class ServerlessBrainEngine:
         self.cached_action = pred
         self.cached_probs = probs
 
+        pred_out = pred - 7 if task == "sub_3bit" else pred
+        true_out = target - 7 if task == "sub_3bit" else target
+        labels = [str(i - 7) for i in range(15)] if task == "sub_3bit" else [str(i) for i in range(k_cls)]
+
         return {
-            "predicted_answer": pred,
-            "true_answer": target,
+            "predicted_answer": pred_out,
+            "true_answer": true_out,
             "is_correct": pred == target,
+            "answer_labels": labels,
             "output_spike_counts": out_counts,
             "total_spikes": int(tot_spk.sum()),
             "latency_ms": round((time.perf_counter() - t0) * 1000.0, 2),

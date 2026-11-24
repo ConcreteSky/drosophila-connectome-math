@@ -9,7 +9,7 @@ import torch
 
 from flybrain_rl.encoding import PopulationEncoderDecoder, TrialSchedule
 
-TaskName = Literal["delayed_xor", "add_3bit", "mod_add"]
+TaskName = Literal["delayed_xor", "add_3bit", "sub_3bit", "mod_add"]
 
 
 @dataclass
@@ -49,7 +49,7 @@ class MathTaskEnv:
     def num_classes_for(task: TaskName) -> int:
         if task == "delayed_xor":
             return 2
-        if task == "add_3bit":
+        if task in ("add_3bit", "sub_3bit"):
             return 15
         if task == "mod_add":
             return 7
@@ -66,9 +66,8 @@ class MathTaskEnv:
     @staticmethod
     def _all_pairs_and_split(task: TaskName) -> tuple[list[tuple[int, int]], int]:
         if task == "delayed_xor":
-            # 3-bit delayed parity: a in 0..3 (2 bits), b in 0..1 (1 bit) -> 8 pairs (6 train / 2 test)
-            return [(a, b) for a in range(4) for b in range(2)], 6
-        if task == "add_3bit":
+            return [(a, b) for a in range(2) for b in range(2)], 3
+        if task in ("add_3bit", "sub_3bit"):
             # 64 pairs: 48 train / 16 unseen test
             return [(a, b) for a in range(8) for b in range(8)], 48
         if task == "mod_add":
@@ -88,22 +87,21 @@ class MathTaskEnv:
         b_vec = [0.0] * num_b_channels
 
         if task == "delayed_xor":
-            av, bv = int(a) & 3, int(b) & 1
-            a0, a1 = av & 1, (av >> 1) & 1
-            target = a0 ^ a1 ^ bv
-            a_vec[0], a_vec[1] = float(a0), float(1 - a0)
-            a_vec[2], a_vec[3] = float(a1), float(1 - a1)
+            av, bv = int(a) & 1, int(b) & 1
+            target = av ^ bv
+            a_vec[0], a_vec[1] = float(av), float(1 - av)
             b_vec[0], b_vec[1] = float(bv), float(1 - bv)
-            return MathProblem(task, av, bv, target, 2, f"({a1},{a0}) XOR {bv}", a_vec, b_vec)
+            return MathProblem(task, av, bv, target, 2, f"{av} XOR {bv}", a_vec, b_vec)
 
-        if task == "add_3bit":
+        if task in ("add_3bit", "sub_3bit"):
             av, bv = max(0, min(7, int(a))), max(0, min(7, int(b)))
-            target = av + bv
+            target = (av + bv) if task == "add_3bit" else (av - bv + 7)
             for bit in range(3):
                 ba, bb = (av >> bit) & 1, (bv >> bit) & 1
                 a_vec[2 * bit], a_vec[2 * bit + 1] = float(ba), float(1 - ba)
                 b_vec[2 * bit], b_vec[2 * bit + 1] = float(bb), float(1 - bb)
-            return MathProblem(task, av, bv, target, 15, f"{av} + {bv}", a_vec, b_vec)
+            op = "+" if task == "add_3bit" else "-"
+            return MathProblem(task, av, bv, target, 15, f"{av} {op} {bv}", a_vec, b_vec)
 
         # mod_add (mod 7)
         av, bv = int(a) % 7, int(b) % 7

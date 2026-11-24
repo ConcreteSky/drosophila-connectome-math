@@ -1,4 +1,4 @@
-export type TaskName = "delayed_xor" | "add_3bit" | "mod_add";
+export type TaskName = "add_3bit" | "sub_3bit" | "mod_add" | "delayed_xor";
 
 export interface HealthResponse {
   status: string;
@@ -27,6 +27,7 @@ export interface SolveResponse {
   predicted_answer: number;
   true_answer: number;
   is_correct: boolean;
+  answer_labels?: string[];
   output_spike_counts: number[];
   total_spikes: number;
   latency_ms: number;
@@ -39,6 +40,12 @@ export interface FeedbackResponse {
   weight_delta_norm: number;
   dopamine_pulse: "reward" | "punish";
   total_updates: number;
+}
+
+export interface TrainStepResponse {
+  task: TaskName;
+  episodes: number;
+  accuracy: number;
 }
 
 export interface LesionState {
@@ -115,6 +122,12 @@ export const apiClient = {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ reward }),
     }),
+  trainStep: (task: TaskName, episodes = 10) =>
+    apiJson<TrainStepResponse>("/api/brain/train-step", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ task, episodes }),
+    }),
   lesion: (req: { mushroom_body: boolean; central_complex: boolean; hub_top_5pct: boolean }) =>
     apiJson<LesionState>("/api/brain/lesion", {
       method: "POST",
@@ -129,8 +142,4 @@ export const apiClient = {
     }),
   summary: () => apiJson<ConnectomeSummary>("/api/connectome/summary"),
   experiments: () => apiJson<ExperimentsResponse>("/api/experiments"),
-  wsTrainUrl: () => {
-    const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
-    return `${proto}//${window.location.host}/api/ws/train`;
-  },
 };

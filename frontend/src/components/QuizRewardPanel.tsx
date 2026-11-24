@@ -1,192 +1,216 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { apiClient, FeedbackResponse, SolveResponse, TaskName } from "../api/client";
 
+export const TASK_LIMITS: Record<TaskName, { max: number; label: string; op: string }> = {
+  add_3bit: { max: 7, label: "Addition (A + B)", op: "+" },
+  sub_3bit: { max: 7, label: "Subtraction (A - B)", op: "-" },
+  mod_add: { max: 6, label: "Modular Math ((A + B) mod 7)", op: "+ (mod 7)" },
+  delayed_xor: { max: 1, label: "Logic Gate (A XOR B)", op: "XOR" },
+};
+
+const EXAMPLES: { label: string; task: TaskName; a: number; b: number }[] = [
+  { label: "3 + 5", task: "add_3bit", a: 3, b: 5 },
+  { label: "6 - 2", task: "sub_3bit", a: 6, b: 2 },
+  { label: "(4 + 5) mod 7", task: "mod_add", a: 4, b: 5 },
+  { label: "1 XOR 0", task: "delayed_xor", a: 1, b: 0 },
+];
+
 interface QuizRewardPanelProps {
-  onSolved: (res: SolveResponse) => void;
-  onPulse: (kind: "reward" | "punish") => void;
+  task: TaskName;
+  a: number;
+  b: number;
+  busy: boolean;
+  solveRes: SolveResponse | null;
+  onTaskChange: (t: TaskName) => void;
+  onAChange: (val: number) => void;
+  onBChange: (val: number) => void;
+  onRun: (overrideTask?: TaskName, overrideA?: number, overrideB?: number) => void;
+  onFeedbackSuccess: (fb: FeedbackResponse) => void;
 }
 
-export const QuizRewardPanel: React.FC<QuizRewardPanelProps> = ({ onSolved, onPulse }) => {
-  const [task, setTask] = useState<TaskName>("delayed_xor");
-  const [a, setA] = useState<number>(1);
-  const [b, setB] = useState<number>(0);
-  const [busy, setBusy] = useState<boolean>(false);
-  const [solveRes, setSolveRes] = useState<SolveResponse | null>(null);
+export const QuizRewardPanel: React.FC<QuizRewardPanelProps> = ({
+  task,
+  a,
+  b,
+  busy,
+  solveRes,
+  onTaskChange,
+  onAChange,
+  onBChange,
+  onRun,
+  onFeedbackSuccess,
+}) => {
   const [lastFb, setLastFb] = useState<FeedbackResponse | null>(null);
-  const [training, setTraining] = useState<boolean>(false);
+  const [trainLoading, setTrainLoading] = useState<boolean>(false);
   const [accHistory, setAccHistory] = useState<number[]>([]);
-  const wsRef = useRef<WebSocket | null>(null);
 
-  const maxA = task === "delayed_xor" ? 3 : task === "add_3bit" ? 7 : 6;
-  const maxB = task === "delayed_xor" ? 1 : task === "add_3bit" ? 7 : 6;
+  const maxVal = TASK_LIMITS[task].max;
+  const clampVal = (v: number, mx: number) => Math.max(0, Math.min(mx, Math.trunc(Number.isNaN(v) ? 0 : v)));
 
-  const handleRandom = () => {
-    setA(Math.floor(Math.random() * (maxA + 1)));
-    setB(Math.floor(Math.random() * (maxB + 1)));
-  };
-
-  const handleRun = async () => {
-    setBusy(true);
-    try {
-      const res = await apiClient.solve(task, a, b);
-      setSolveRes(res);
-      setLastFb(null);
-      onSolved(res);
-    } finally {
-      setBusy(false);
-    }
+  const handleTaskSelect = (next: TaskName) => {
+    const mx = TASK_LIMITS[next].max;
+    onTaskChange(next);
+    onAChange(clampVal(a, mx));
+    onBChange(clampVal(b, mx));
   };
 
   const handleFeedback = async (reward: 1 | -1) => {
-    setBusy(true);
+    const fb = await apiClient.feedback(reward);
+    setLastFb(fb);
+    onFeedbackSuccess(fb);
+  };
+
+  const handleAutoTrain = async () => {
+    setTrainLoading(true);
     try {
-      const fb = await apiClient.feedback(reward);
-      setLastFb(fb);
-      onPulse(fb.dopamine_pulse);
+      const res = await apiClient.trainStep(task, 10);
+      setAccHistory((prev) => [...prev, res.accuracy]);
     } finally {
-      setBusy(false);
+      setTrainLoading(false);
     }
   };
 
-  const handleToggleAutoTrain = () => {
-    if (training && wsRef.current) {
-      wsRef.current.close();
-      wsRef.current = null;
-      setTraining(false);
-      return;
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !busy) {
+      e.preventDefault();
+      onRun();
     }
-    const ws = new WebSocket(apiClient.wsTrainUrl());
-    wsRef.current = ws;
-    setTraining(true);
-    setAccHistory([]);
-    ws.onopen = () => {
-      ws.send(JSON.stringify({ task, episodes: 20, batch_size: 4, plasticity: "rstdp" }));
-    };
-    ws.onmessage = (ev) => {
-      const msg = JSON.parse(ev.data);
-      setAccHistory((prev) => [...prev, msg.test_acc]);
-    };
-    ws.onclose = () => {
-      setTraining(false);
-      wsRef.current = null;
-    };
-    ws.onerror = () => {
-      setTraining(false);
-      wsRef.current = null;
-    };
   };
 
-  const maxPoolCount = Math.max(1, ...(solveRes?.output_spike_counts || [1]));
+  // Top 4 Answer Candidates sorted by spike votes
+  const topCandidates = solveRes
+    ? solveRes.output_spike_counts
+        .map((spikes, idx) => ({
+          label: solveRes.answer_labels?.[idx] ?? String(idx),
+          spikes,
+        }))
+        .sort((x, y) => y.spikes - x.spikes)
+        .slice(0, 4)
+    : [];
+  const maxVotes = Math.max(1, ...topCandidates.map((c) => c.spikes));
 
   return (
     <div className="panel">
       <div className="panel-header">
-        <h2 className="panel-title">Quiz &amp; Dopamine Training</h2>
+        <h2 className="panel-title">Ask &amp; Train the Fly Brain</h2>
         {lastFb && (
-          <span style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--text-dim)" }}>
-            ΔW={lastFb.weight_delta_norm.toFixed(4)} · updates={lastFb.total_updates}
+          <span
+            title="How much the brain adjusted its connections after your feedback"
+            style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--text-dim)" }}
+          >
+            Brain Connection Change: {lastFb.weight_delta_norm.toFixed(4)}
           </span>
         )}
       </div>
 
-      <div className="controls-row">
+      <div className="chips-row" aria-label="Example problems">
+        {EXAMPLES.map((ex) => (
+          <button
+            key={ex.label}
+            type="button"
+            className="chip-btn"
+            disabled={busy}
+            onClick={() => {
+              onTaskChange(ex.task);
+              onAChange(ex.a);
+              onBChange(ex.b);
+              onRun(ex.task, ex.a, ex.b);
+            }}
+          >
+            {ex.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="controls-row" onKeyDown={handleKeyDown}>
         <div className="field">
-          <label htmlFor="task-select">Task</label>
+          <label htmlFor="task-select">Operation</label>
           <select
             id="task-select"
             value={task}
-            onChange={(e) => setTask(e.target.value as TaskName)}
+            onChange={(e) => handleTaskSelect(e.target.value as TaskName)}
           >
-            <option value="delayed_xor">Delayed XOR</option>
-            <option value="add_3bit">3-Bit Add</option>
-            <option value="mod_add">Mod Add (mod 7)</option>
+            <option value="add_3bit">Addition (A + B)</option>
+            <option value="sub_3bit">Subtraction (A - B)</option>
+            <option value="mod_add">Modular Math ((A + B) mod 7)</option>
+            <option value="delayed_xor">Logic Gate (A XOR B)</option>
           </select>
         </div>
 
         <div className="field">
-          <label htmlFor="input-a">A</label>
+          <label htmlFor="input-a">A (0–{maxVal})</label>
           <input
             id="input-a"
             type="number"
             min={0}
-            max={maxA}
+            max={maxVal}
             value={a}
-            onChange={(e) => setA(Number(e.target.value))}
+            onChange={(e) => onAChange(clampVal(Number(e.target.value), maxVal))}
           />
         </div>
 
         <div className="field">
-          <label htmlFor="input-b">B</label>
+          <label htmlFor="input-b">B (0–{maxVal})</label>
           <input
             id="input-b"
             type="number"
             min={0}
-            max={maxB}
+            max={maxVal}
             value={b}
-            onChange={(e) => setB(Number(e.target.value))}
+            onChange={(e) => onBChange(clampVal(Number(e.target.value), maxVal))}
           />
         </div>
 
-        <button onClick={handleRandom} disabled={busy}>
-          Random
+        <button className="primary" type="button" onClick={() => onRun()} disabled={busy}>
+          Ask the Fly
         </button>
-        <button className="primary" onClick={handleRun} disabled={busy}>
-          Run Brain
-        </button>
-        <button onClick={handleToggleAutoTrain} disabled={busy}>
-          {training ? "Stop Train" : "Auto-Train"}
+        <button type="button" onClick={handleAutoTrain} disabled={busy || trainLoading}>
+          {trainLoading ? "Training..." : "Auto-Train (10×)"}
         </button>
       </div>
 
       {solveRes && (
         <>
-          <div className="result-grid">
-            <div className="metric-box">
-              <div className="metric-label">Guess</div>
-              <div
-                className="metric-value"
-                style={{ color: solveRes.is_correct ? "var(--reward)" : "var(--punish)" }}
-              >
-                {solveRes.predicted_answer}
-              </div>
+          <div style={{ marginTop: 10 }}>
+            <div className="panel-title" style={{ marginBottom: 6 }}>
+              Top Answer Votes (Motor Neurons)
             </div>
-            <div className="metric-box">
-              <div className="metric-label">True</div>
-              <div className="metric-value">{solveRes.true_answer}</div>
-            </div>
-            <div className="metric-box">
-              <div className="metric-label">Spikes</div>
-              <div className="metric-value">{solveRes.total_spikes.toLocaleString()}</div>
-            </div>
-            <div className="metric-box">
-              <div className="metric-label">Latency</div>
-              <div className="metric-value">{solveRes.latency_ms} ms</div>
-            </div>
-          </div>
-
-          {/* Output pool spike-count bar chart */}
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 4, height: 42, margin: "8px 0" }}>
-            {solveRes.output_spike_counts.map((cnt, k) => (
-              <div key={k} style={{ flex: 1, textAlign: "center" }}>
-                <div
-                  style={{
-                    height: `${Math.max(3, (cnt / maxPoolCount) * 28)}px`,
-                    background: k === solveRes.predicted_answer ? "var(--spike)" : "#30363d",
-                    borderRadius: 2,
-                  }}
-                />
-                <div style={{ fontSize: 9, fontFamily: "var(--mono)", color: "var(--text-dim)" }}>
-                  {k}
+            {topCandidates.map((cand, idx) => (
+              <div key={cand.label} className="vote-row">
+                <span>{cand.label}</span>
+                <div className="vote-track">
+                  <div
+                    className="vote-fill"
+                    style={{
+                      width: `${Math.max(4, (cand.spikes / maxVotes) * 100)}%`,
+                      background: idx === 0 ? "var(--spike)" : "#3b4351",
+                    }}
+                  />
                 </div>
+                <span style={{ textAlign: "right", color: "var(--text-dim)" }}>
+                  {cand.spikes.toFixed(1)} spk
+                </span>
               </div>
             ))}
           </div>
 
-          <div style={{ display: "flex", gap: 8 }}>
-            <button className="btn-reward" disabled={busy} onClick={() => handleFeedback(1)}>
+          <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
+            <button
+              className="btn-reward"
+              type="button"
+              disabled={busy}
+              title="Send a green dopamine reward (+1) to strengthen active brain paths"
+              onClick={() => handleFeedback(1)}
+            >
               Reward (+1)
             </button>
-            <button className="btn-punish" disabled={busy} onClick={() => handleFeedback(-1)}>
+            <button
+              className="btn-punish"
+              type="button"
+              disabled={busy}
+              title="Send a red punishment (-1) to weaken the wrong answer path"
+              onClick={() => handleFeedback(-1)}
+            >
               Punish (-1)
             </button>
           </div>
@@ -194,11 +218,10 @@ export const QuizRewardPanel: React.FC<QuizRewardPanelProps> = ({ onSolved, onPu
       )}
 
       {accHistory.length > 0 && (
-        <div style={{ marginTop: 10 }}>
-          <div style={{ fontSize: 11, color: "var(--text-dim)", fontFamily: "var(--mono)" }}>
-            Live Auto-Train Test Acc: {(accHistory[accHistory.length - 1] * 100).toFixed(1)}% (ep{" "}
-            {accHistory.length})
-          </div>
+        <div style={{ marginTop: 12, fontFamily: "var(--mono)", fontSize: 12, color: "var(--text-dim)" }}>
+          Accuracy: {Math.round(accHistory[0] * 100)}%
+          {accHistory.length > 1 ? ` → ${Math.round(accHistory[accHistory.length - 1] * 100)}%` : ""} (
+          {accHistory.length * 10} training trials)
         </div>
       )}
     </div>
