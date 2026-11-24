@@ -44,6 +44,8 @@ class LIFConfig:
     refrac_steps: int = 2
     r_mem: float = 1.0
     weight_scale: float = 2.0
+    adapt_inc_mv: float = 0.4
+    tau_adapt_ms: float = 40.0
 
 
 @dataclass(frozen=True)
@@ -60,3 +62,9 @@ class TrainingConfig:
     lr_reinforce: float = 0.03
     temperature: float = 0.5
     reward_baseline_alpha: float = 0.05
+    neg_penalty_scale: float = 2.0
+    mistake_scale_step: float = 0.75
+    mistake_scale_max: float = 4.0
+    taboo_penalty: float = 5.0
+    taboo_decay: float = 0.92
+    entropy_coef: float = 0.02

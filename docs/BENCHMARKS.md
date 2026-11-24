@@ -19,4 +19,10 @@ Run on `local_gpu` (`delayed_xor`, 10 episodes, `batch_size=1`, seed `0`):
 - `shuffled_brain` (`rstdp`): `70.0%` held-out test accuracy (`958.6` mean spikes/trial)
 - `pytorch_gru` (`reinforce`): `40.0%` held-out test accuracy
 
+## 3. `0–100` Bit-Coded Subnetwork Generalization (`1,024` Kenyon Cells, `800` Train / `200` Unseen Test Pairs)
+- **`sub_3bit` (`0–100`):** `8.5%` exact train, `2.5%` unseen test (`67.3%` unseen per-bit accuracy)
+- **`add_3bit` (`0–100`):** `6.2%` exact train, `1.0%` unseen test (`62.8%` unseen per-bit accuracy)
+- **`mod_add` (`mod 7`):** `100.0%` train (`37` pairs), `0.0%` unseen test (`12` pairs)
+- **`delayed_xor`:** `100.0%` train (`3` pairs), `0.0%` unseen test (`1` pair)
+
 Full multi-seed sweeps across `delayed_xor`, `add_3bit`, and `mod_add` with `batch_size=256` are configured in `notebooks/train_colab.ipynb` for `cloud_gpu`.

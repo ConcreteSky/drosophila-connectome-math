@@ -10,7 +10,7 @@ A scientific computing and reinforcement-learning application that loads the rea
 - **Batched Sparse LIF Simulator:** Supports `(B, N)` vectorized membrane integration, exponential synaptic current decay, refractory periods, and region/hub lesioning on `local_gpu` (CUDA) and `local_cpu`.
 - **Dual Plasticity Engines:** Three-factor dopamine-modulated **R-STDP** (decaying eligibility traces with strict Dale's Law clamping) and **REINFORCE** policy gradients.
 - **Scientific Controls & Ablations:** Degree-preserving configuration-model shuffled brain, matched-budget PyTorch GRU baseline, and targeted lesions (`Mushroom Body`, `Central Complex`, `Top 5% Hubs`) with post-lesion recovery tracking.
-- **Interactive 2D Dorsal Brain Visualizer:** Dark-graphite HTML5 Canvas + SVG interface playing back 60 ms spike cascades at 60 FPS with live `+1` / `-1` dopamine pulses and DuckDB telemetry.
+- **Interactive 2D Dorsal Brain Visualizer:** Obsidian-indigo HTML5 Canvas + anatomical SVG neuropil interface (optic lobes, antennal lobes, Mushroom Bodies, Central Complex) playing back 60 ms spike cascades at 60 FPS with live `+1` / `-1` dopamine ripples, `0–100` keyboard inputs, and a 3-tab workflow (*Play & Train*, *Brain Damage Lab*, *Science & Benchmarks*).
 
 ## Technology Stack
 - **Frontend:** React, TypeScript, Vite, HTML5 Canvas, SVG, Vitest, Testing Library
@@ -38,7 +38,7 @@ A scientific computing and reinforcement-learning application that loads the rea
 | --- | --- | --- |
 | `/api/health` | `GET` | Service health, execution target (`local_cpu`, `local_gpu`, `serverless_cpu`), and memory status |
 | `/api/brain/layout` | `GET` | 3,000 dorsal 2D landmark neuron coordinates across 6 anatomical regions |
-| `/api/brain/solve` | `POST` | Run a 60 ms LIF trial for `delayed_xor`, `add_3bit`, or `mod_add` and return spike events |
+| `/api/brain/solve` | `POST` | Run a 60 ms LIF trial for `add_3bit` (`0–100`), `sub_3bit` (`0–100`), `mod_add` (`0–6`), or `delayed_xor` (`0–1`) |
 | `/api/brain/feedback` | `POST` | Apply manual `+1` (dopamine reward) or `-1` (punishment) to the cached trial |
 | `/api/brain/train-step` | `POST` | Run a batch of automated RL training episodes (serverless HTTP) |
 | `/api/ws/train` | `WS` | Stream per-episode training metrics in real time (local `flybrain_rl.api` server) |

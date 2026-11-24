@@ -92,6 +92,68 @@ class SpikingPolicyBase:
         self._cached_action: Optional[int] = None
         self._cached_probs: Optional[torch.Tensor] = None
         self._cached_elig_conn: Optional[torch.Tensor] = None
+        self._cached_label: Optional[str] = None
+
+        # State-dependent mistake memory to prevent repeating punished errors
+        self._mistake_counts: dict[tuple[str, int], int] = {}
+        self._state_taboo: dict[tuple[str, int], float] = {}
+
+    def reset_memory(self) -> None:
+        self._mistake_counts.clear()
+        self._state_taboo.clear()
+        self._cached_feat = None
+        self._cached_action = None
+        self._cached_probs = None
+        self._cached_elig_conn = None
+        self._cached_label = None
+
+    def _apply_taboo(self, logits: torch.Tensor, label: str) -> torch.Tensor:
+        if not self._state_taboo:
+            return logits
+        adj = logits.clone()
+        for k in range(self.num_classes):
+            pen = self._state_taboo.get((label, k), 0.0)
+            if pen > 0.0:
+                adj[k] -= pen
+        return adj
+
+    def _apply_taboo_batch(self, logits: torch.Tensor, labels: list[str]) -> torch.Tensor:
+        if not self._state_taboo:
+            return logits
+        adj = logits.clone()
+        for i, lbl in enumerate(labels):
+            for k in range(self.num_classes):
+                pen = self._state_taboo.get((lbl, k), 0.0)
+                if pen > 0.0:
+                    adj[i, k] -= pen
+        return adj
+
+    def _record_mistake_and_scale(self, label: str, action: int, reward: float) -> float:
+        """Update state-dependent mistake/taboo memory and return penalty multiplier."""
+        key = (label, action)
+        if reward < 0.0:
+            count = self._mistake_counts.get(key, 0) + 1
+            self._mistake_counts[key] = count
+            scale = min(
+                self.cfg.mistake_scale_max,
+                1.0 + self.cfg.mistake_scale_step * (count - 1),
+            )
+            self._state_taboo[key] = min(
+                self.cfg.w_max * 3.0,
+                self._state_taboo.get(key, 0.0) + self.cfg.taboo_penalty * scale,
+            )
+            return self.cfg.neg_penalty_scale * scale
+
+        # Positive reward clears repetition count for (label, action) and decays taboos on this state
+        self._mistake_counts.pop(key, None)
+        for k in range(self.num_classes):
+            tk = (label, k)
+            if tk in self._state_taboo:
+                if k == action:
+                    self._state_taboo.pop(tk, None)
+                else:
+                    self._state_taboo[tk] *= self.cfg.taboo_decay
+        return 1.0
 
     def extract_features(self, total_spikes: torch.Tensor, readout_spikes: torch.Tensor) -> torch.Tensor:
         sched = self.env.schedule
@@ -193,7 +255,7 @@ class RSTDPTrainer(SpikingPolicyBase):
             ext, record_regions=True, landmark_indices=landmark_indices, track_traces=True
         )
         feat = self.extract_features(tot, ro)[0]
-        logits = self.W_out @ feat + self.b_out
+        logits = self._apply_taboo(self.W_out @ feat + self.b_out, problem.label)
         probs = torch.softmax(logits / self.cfg.temperature, dim=0)
         pred = int(torch.argmax(probs).item())
         out_counts = self.env.encoder.decode_counts(ro, self.num_classes)[0].cpu().tolist()
@@ -202,6 +264,7 @@ class RSTDPTrainer(SpikingPolicyBase):
         self._cached_action = pred
         self._cached_probs = probs
         self._cached_elig_conn = elig_conn
+        self._cached_label = problem.label
 
         return TrialOutput(
             task=problem.task,
@@ -215,21 +278,52 @@ class RSTDPTrainer(SpikingPolicyBase):
             spike_events=spk_ev,
         )
 
+    def _anti_saturation_direction(self, probs: torch.Tensor, action: int) -> torch.Tensor:
+        """Direction vector that scales UP with confidence on negative updates."""
+        one_hot = torch.zeros(self.num_classes, dtype=torch.float32, device=self.device)
+        one_hot[action] = 1.0
+        p_act = float(probs[action].item())
+        mag = 0.5 + p_act
+        other = mag / max(1, self.num_classes - 1)
+        return mag * one_hot - other * (1.0 - one_hot)
+
     def apply_feedback(self, reward: float) -> float:
         if self._cached_feat is None or self._cached_action is None or self._cached_probs is None:
             return 0.0
-        adv = reward - self.r_bar
-        self.r_bar = (1.0 - self.cfg.reward_baseline_alpha) * self.r_bar + self.cfg.reward_baseline_alpha * reward
-        if abs(adv) < 1e-6:
-            adv = reward
+        label = self._cached_label or "interactive"
+        scale = self._record_mistake_and_scale(label, self._cached_action, reward)
 
-        one_hot = torch.zeros(self.num_classes, dtype=torch.float32, device=self.device)
-        one_hot[self._cached_action] = 1.0
-        dW = self.cfg.lr_rstdp * adv * torch.outer(one_hot - self._cached_probs, self._cached_feat)
-        db = 0.2 * self.cfg.lr_rstdp * adv * (one_hot - self._cached_probs)
+        if reward < 0.0:
+            # Never let a negative baseline r_bar shrink punishment
+            adv = min(reward, reward - self.r_bar) * scale
+            direction = self._anti_saturation_direction(self._cached_probs, self._cached_action)
+        else:
+            adv = max(0.25 * reward, reward - self.r_bar)
+            one_hot = torch.zeros(self.num_classes, dtype=torch.float32, device=self.device)
+            one_hot[self._cached_action] = 1.0
+            direction = one_hot - self._cached_probs
+
+        self.r_bar = (1.0 - self.cfg.reward_baseline_alpha) * self.r_bar + self.cfg.reward_baseline_alpha * reward
+
+        dW = self.cfg.lr_rstdp * adv * torch.outer(direction, self._cached_feat)
+        db = 0.25 * self.cfg.lr_rstdp * adv * direction
         old_W = self.W_out.clone()
         self.W_out = (self.W_out + dW).clamp(-self.cfg.w_max, self.cfg.w_max)
         self.b_out = (self.b_out + db).clamp(-self.cfg.w_max, self.cfg.w_max)
+
+        # Ensure a punished state-action immediately drops below the best alternative
+        if reward < 0.0:
+            post_logits = self._apply_taboo(self.W_out @ self._cached_feat + self.b_out, label)
+            other_mask = torch.ones(self.num_classes, dtype=torch.bool, device=self.device)
+            other_mask[self._cached_action] = False
+            best_other = float(post_logits[other_mask].max().item())
+            act_logit = float(post_logits[self._cached_action].item())
+            if act_logit >= best_other:
+                self._state_taboo[(label, self._cached_action)] = (
+                    self._state_taboo.get((label, self._cached_action), 0.0)
+                    + (act_logit - best_other)
+                    + 0.5
+                )
 
         if self._cached_elig_conn is not None and self.cfg.conn_lr_rstdp > 0:
             self.brain.values[self.plastic_edge_idx] += (
@@ -246,32 +340,52 @@ class RSTDPTrainer(SpikingPolicyBase):
         return delta
 
     def train_step(self, batch_size: int = 32) -> dict:
-        _, a_vecs, b_vecs, targets = self.env.sample_batch("train", batch_size=batch_size, rng=self.rng)
+        probs_meta, a_vecs, b_vecs, targets = self.env.sample_batch("train", batch_size=batch_size, rng=self.rng)
+        labels = [p.label for p in probs_meta]
         ext = self.env.encoder.encode_batch(a_vecs, b_vecs, self.env.schedule)
         tot, ro, mean_spk, elig_conn, _, _ = self._run_with_traces(ext, track_traces=True)
 
         feats = self.extract_features(tot, ro)
-        logits = feats @ self.W_out.t() + self.b_out
+        logits = self._apply_taboo_batch(feats @ self.W_out.t() + self.b_out, labels)
         probs = torch.softmax(logits / self.cfg.temperature, dim=1)
         actions = torch.multinomial(probs, num_samples=1).squeeze(1)
 
         rewards = MathTaskEnv.compute_reward(actions, targets)
         mean_r = float(rewards.mean().item())
-        adv = rewards - self.r_bar
+
+        eff_adv = torch.empty_like(rewards)
+        directions = torch.empty_like(probs)
+        for i in range(batch_size):
+            r_i = float(rewards[i].item())
+            act_i = int(actions[i].item())
+            scale_i = self._record_mistake_and_scale(labels[i], act_i, r_i)
+            if r_i < 0.0:
+                eff_adv[i] = min(r_i, r_i - self.r_bar) * scale_i
+                directions[i] = self._anti_saturation_direction(probs[i], act_i)
+            else:
+                eff_adv[i] = max(0.25 * r_i, r_i - self.r_bar)
+                one_hot_i = torch.zeros(self.num_classes, dtype=torch.float32, device=self.device)
+                one_hot_i[act_i] = 1.0
+                directions[i] = one_hot_i - probs[i]
+
         self.r_bar = (1.0 - self.cfg.reward_baseline_alpha) * self.r_bar + self.cfg.reward_baseline_alpha * mean_r
 
-        one_hot = torch.zeros_like(probs)
-        one_hot.scatter_(1, actions.unsqueeze(1), 1.0)
-        diff = (one_hot - probs) * adv.unsqueeze(1)
-        self.W_out = (self.W_out + self.cfg.lr_rstdp * (diff.t() @ feats) / batch_size).clamp(
-            -self.cfg.w_max, self.cfg.w_max
-        )
-        self.b_out = (self.b_out + 0.2 * self.cfg.lr_rstdp * diff.mean(dim=0)).clamp(
-            -self.cfg.w_max, self.cfg.w_max
-        )
+        diff = directions * eff_adv.unsqueeze(1)
+        # Mild entropy-preserving push against uniform collapse
+        uniform_pull = (1.0 / self.num_classes) - probs
+        self.W_out = (
+            self.W_out
+            + self.cfg.lr_rstdp * (diff.t() @ feats) / batch_size
+            + self.cfg.entropy_coef * self.cfg.lr_rstdp * (uniform_pull.t() @ feats) / batch_size
+        ).clamp(-self.cfg.w_max, self.cfg.w_max)
+        self.b_out = (
+            self.b_out
+            + 0.25 * self.cfg.lr_rstdp * diff.mean(dim=0)
+            + self.cfg.entropy_coef * 0.25 * self.cfg.lr_rstdp * uniform_pull.mean(dim=0)
+        ).clamp(-self.cfg.w_max, self.cfg.w_max)
 
         if elig_conn is not None and self.cfg.conn_lr_rstdp > 0:
-            mean_adv = float(adv.mean().item())
+            mean_adv = float(eff_adv.mean().item())
             self.brain.values[self.plastic_edge_idx] += (
                 self.cfg.conn_lr_rstdp * mean_adv * elig_conn * self.brain.edge_signs[self.plastic_edge_idx]
             )
@@ -315,21 +429,30 @@ class REINFORCETrainer(SpikingPolicyBase):
         self.optimizer = torch.optim.Adam(self.policy.parameters(), lr=self.cfg.lr_reinforce)
 
     def train_step(self, batch_size: int = 32) -> dict:
-        _, a_vecs, b_vecs, targets = self.env.sample_batch("train", batch_size=batch_size, rng=self.rng)
+        probs_meta, a_vecs, b_vecs, targets = self.env.sample_batch("train", batch_size=batch_size, rng=self.rng)
+        labels = [p.label for p in probs_meta]
         ext = self.env.encoder.encode_batch(a_vecs, b_vecs, self.env.schedule)
         sched = self.env.schedule
         out = self.brain.run(ext, readout_window=(sched.readout_start, sched.readout_end))
         feats = self.extract_features(out["spike_counts"], out["readout_counts"])
-        logits = self.policy(feats)
+        logits = self._apply_taboo_batch(self.policy(feats), labels)
         dist = torch.distributions.Categorical(logits=logits)
         actions = dist.sample()
 
         rewards = MathTaskEnv.compute_reward(actions, targets)
         mean_r = float(rewards.mean().item())
-        adv = rewards - self.r_bar
+        adv = torch.empty_like(rewards)
+        for i in range(batch_size):
+            r_i = float(rewards[i].item())
+            scale_i = self._record_mistake_and_scale(labels[i], int(actions[i].item()), r_i)
+            if r_i < 0.0:
+                adv[i] = min(r_i, r_i - self.r_bar) * scale_i
+            else:
+                adv[i] = max(0.25 * r_i, r_i - self.r_bar)
+
         self.r_bar = (1.0 - self.cfg.reward_baseline_alpha) * self.r_bar + self.cfg.reward_baseline_alpha * mean_r
 
-        loss = -(dist.log_prob(actions) * adv).mean()
+        loss = -(dist.log_prob(actions) * adv).mean() - self.cfg.entropy_coef * dist.entropy().mean()
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()

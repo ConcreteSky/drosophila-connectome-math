@@ -169,6 +169,7 @@ class BrainSession:
             tr.W_out.zero_()
             tr.b_out.zero_()
             tr.r_bar = 0.0
+            tr.reset_memory()
             if mode == "checkpoint":
                 ckpt_file = EXPERIMENTS_DIR / "checkpoints" / f"{task}_seed0.pt"
                 if ckpt_file.exists():

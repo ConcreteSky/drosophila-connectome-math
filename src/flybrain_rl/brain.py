@@ -30,6 +30,7 @@ class SpikingFlyBrain:
 
         self.alpha = math.exp(-self.cfg.dt_ms / self.cfg.tau_mem_ms)
         self.beta = math.exp(-self.cfg.dt_ms / self.cfg.tau_syn_ms)
+        self.gamma_adapt = math.exp(-self.cfg.dt_ms / self.cfg.tau_adapt_ms)
 
         self.crow_indices = graph.crow_indices.to(self.device)
         self.col_indices = graph.col_indices.to(self.device)
@@ -56,6 +57,7 @@ class SpikingFlyBrain:
         self.i_syn: torch.Tensor
         self.refrac: torch.Tensor
         self.last_spikes: torch.Tensor
+        self.theta_adapt: torch.Tensor
         self.reset_state(batch_size=1)
 
     def rebuild_csr(self) -> None:
@@ -90,6 +92,7 @@ class SpikingFlyBrain:
             self.i_syn.zero_()
             self.refrac.zero_()
             self.last_spikes.zero_()
+            self.theta_adapt.zero_()
         else:
             self.v = torch.full(
                 (batch_size, self.num_neurons),
@@ -104,6 +107,9 @@ class SpikingFlyBrain:
                 (batch_size, self.num_neurons), dtype=torch.int16, device=self.device
             )
             self.last_spikes = torch.zeros(
+                (batch_size, self.num_neurons), dtype=torch.float32, device=self.device
+            )
+            self.theta_adapt = torch.zeros(
                 (batch_size, self.num_neurons), dtype=torch.float32, device=self.device
             )
 
@@ -177,9 +183,11 @@ class SpikingFlyBrain:
         # Lesioned neurons stay clamped at rest and cannot spike
         self.v = torch.where(active > 0, self.v, torch.full_like(self.v, self.cfg.v_rest_mv))
 
-        fired = (self.v >= self.cfg.v_thresh_mv) & not_refrac & (active > 0)
+        eff_thresh = self.cfg.v_thresh_mv + self.theta_adapt
+        fired = (self.v >= eff_thresh) & not_refrac & (active > 0)
         spikes = fired.to(torch.float32)
 
+        self.theta_adapt.mul_(self.gamma_adapt).add_(spikes * self.cfg.adapt_inc_mv)
         self.v = torch.where(fired, torch.full_like(self.v, self.cfg.v_reset_mv), self.v)
         self.refrac = torch.where(
             fired,
