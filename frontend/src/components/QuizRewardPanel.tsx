@@ -146,11 +146,13 @@ export const QuizRewardPanel: React.FC<QuizRewardPanelProps> = ({
           <label htmlFor="input-a">A (0–{maxVal})</label>
           <input
             id="input-a"
-            type="number"
-            min={0}
-            max={maxVal}
+            type="text"
+            inputMode="numeric"
             value={a}
-            onChange={(e) => onAChange(clampVal(Number(e.target.value), maxVal))}
+            onChange={(e) => {
+              const digits = e.target.value.replace(/\D/g, "");
+              onAChange(digits === "" ? 0 : clampVal(Number(digits), maxVal));
+            }}
           />
         </div>
 
@@ -158,11 +160,13 @@ export const QuizRewardPanel: React.FC<QuizRewardPanelProps> = ({
           <label htmlFor="input-b">B (0–{maxVal})</label>
           <input
             id="input-b"
-            type="number"
-            min={0}
-            max={maxVal}
+            type="text"
+            inputMode="numeric"
             value={b}
-            onChange={(e) => onBChange(clampVal(Number(e.target.value), maxVal))}
+            onChange={(e) => {
+              const digits = e.target.value.replace(/\D/g, "");
+              onBChange(digits === "" ? 0 : clampVal(Number(digits), maxVal));
+            }}
           />
         </div>
 

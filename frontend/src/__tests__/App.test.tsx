@@ -102,7 +102,7 @@ describe("Drosophila Fly Brain Plain-English UI", () => {
     // Switching to XOR clamps A and B to 0-1
     const select = screen.getByLabelText("Operation") as HTMLSelectElement;
     fireEvent.change(select, { target: { value: "delayed_xor" } });
-    expect(screen.getByLabelText(/A \(0–1\)/i)).toHaveValue(1);
+    expect((screen.getByLabelText(/A \(0–1\)/i) as HTMLInputElement).value).toBe("1");
 
     // Switching to mod_add caps at 0-6
     fireEvent.change(select, { target: { value: "mod_add" } });

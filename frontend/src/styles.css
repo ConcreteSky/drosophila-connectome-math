@@ -265,7 +265,7 @@ body {
 .field { display: flex; flex-direction: column; gap: 3px; }
 .field label { font-size: 11px; color: var(--text-dim); }
 
-select, input[type="number"] {
+select, input[type="text"], input[type="number"] {
   background: var(--bg);
   color: var(--text);
   border: 1px solid var(--border);
@@ -273,6 +273,11 @@ select, input[type="number"] {
   padding: 6px 9px;
   font-family: var(--mono);
   font-size: 12px;
+  width: 84px;
+}
+
+select {
+  width: auto;
 }
 
 .chips-row {
