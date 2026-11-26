@@ -7,1043 +7,953 @@
 <style>
   @page {
     size: A4 portrait;
-    margin: 0.6in 0.65in;
-    background: #0B0E14;
+    margin: 0.9in 0.85in 0.9in 0.85in;
+    background: #FFFFFF;
+    @top-left {
+      content: "Drosophila Connectome Simulation and Reward-Modulated Learning";
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 8pt;
+      font-style: italic;
+      color: #555555;
+    }
+    @top-right {
+      content: "M. Shirinov";
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 8pt;
+      color: #555555;
+    }
+    @bottom-center {
+      content: counter(page);
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 9pt;
+      color: #222222;
+    }
   }
+  @page :first {
+    @top-left { content: none; }
+    @top-right { content: none; }
+  }
+
   * { box-sizing: border-box; }
   html, body {
     margin: 0;
     padding: 0;
-    background: #0B0E14;
-    color: #E2E8F0;
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 9.8pt;
-    line-height: 1.54;
+    background: #FFFFFF;
+    color: #111111;
+    font-family: "Georgia", "Cambria", "Times New Roman", serif;
+    font-size: 10.2pt;
+    line-height: 1.52;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
+
   .paper {
-    max-width: 7.2in;
+    max-width: 6.57in;
     margin: 0 auto;
-    padding: 0;
-    background: #0B0E14;
+    background: #FFFFFF;
   }
 
-  /* Header / Title Block */
-  .paper-header {
-    border-bottom: 1px solid #1E293B;
+  /* Title Block - Classic Academic */
+  .title-block {
+    text-align: center;
     padding-bottom: 16px;
     margin-bottom: 18px;
+    border-bottom: 1px solid #111111;
   }
-  .eyebrow {
-    font-family: "JetBrains Mono", "Cascadia Code", ui-monospace, monospace;
-    font-size: 8.4pt;
-    font-weight: 600;
-    letter-spacing: 0.14em;
+  .doc-type {
+    font-size: 8.5pt;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #818CF8;
-    margin-bottom: 8px;
+    color: #444444;
+    margin-bottom: 10px;
   }
   h1.title {
-    font-size: 20.5pt;
-    line-height: 1.18;
+    font-size: 17.5pt;
+    line-height: 1.24;
     font-weight: 700;
-    letter-spacing: -0.02em;
-    color: #F8FAFC;
-    margin: 0 0 10px 0;
+    color: #000000;
+    margin: 0 0 12px 0;
   }
-  .authors {
-    font-size: 10.5pt;
+  .author-line {
+    font-size: 10.8pt;
     font-weight: 600;
-    color: #F8FAFC;
+    color: #111111;
     margin-bottom: 4px;
   }
-  .affiliation {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
-    font-size: 8pt;
-    color: #94A3B8;
+  .meta-line {
+    font-size: 9pt;
+    color: #444444;
+    margin-bottom: 2px;
+  }
+  .meta-mono {
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 8.4pt;
+    color: #222222;
   }
 
   /* Abstract */
-  .abstract-box {
-    background: #111622;
-    border: 1px solid #1E293B;
-    border-left: 3px solid #818CF8;
-    border-radius: 8px;
-    padding: 14px 16px;
-    margin-bottom: 18px;
+  .abstract {
+    margin: 0 0.3in 20px 0.3in;
+    padding: 10px 0 12px 0;
+    border-bottom: 0.75pt solid #CCCCCC;
   }
-  .abstract-label {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
-    font-size: 8.4pt;
+  .abstract-title {
+    text-align: center;
+    font-size: 9.8pt;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #818CF8;
-    margin-bottom: 6px;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+    color: #000000;
   }
-  .abstract-box p {
-    margin: 0;
-    font-size: 9.5pt;
-    color: #CBD5E1;
-    line-height: 1.52;
+  .abstract p {
+    font-size: 9.4pt;
+    line-height: 1.48;
+    text-align: justify;
+    margin: 0 0 8px 0;
+    color: #1A1A1A;
+  }
+  .keywords {
+    font-size: 8.8pt;
+    color: #333333;
+    margin-top: 6px;
+    text-align: left;
   }
 
-  /* Sections */
+  /* Headings */
   h2 {
-    font-size: 12.6pt;
+    font-size: 12pt;
     font-weight: 700;
-    color: #F8FAFC;
-    margin: 16px 0 6px 0;
-    padding-bottom: 4px;
-    border-bottom: 1px solid #1E293B;
+    color: #000000;
+    margin: 22px 0 8px 0;
+    padding-bottom: 3px;
+    border-bottom: 0.75pt solid #111111;
     page-break-after: avoid;
   }
-  h2 .sec-num {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
-    color: #818CF8;
-    margin-right: 6px;
-  }
   h3 {
-    font-size: 10.4pt;
-    font-weight: 600;
-    color: #E2E8F0;
-    margin: 13px 0 5px 0;
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: #111111;
+    margin: 15px 0 6px 0;
     page-break-after: avoid;
   }
   p {
     margin: 0 0 9px 0;
-    color: #CBD5E1;
     text-align: justify;
+    hyphens: auto;
   }
   ul, ol {
-    margin: 0 0 11px 0;
-    padding-left: 18px;
-    color: #CBD5E1;
+    margin: 4px 0 11px 0;
+    padding-left: 20px;
   }
-  li { margin-bottom: 5px; }
-  strong { color: #F8FAFC; }
-  code {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
-    font-size: 8.6pt;
-    background: #111622;
-    border: 1px solid #1E293B;
-    padding: 1px 4px;
-    border-radius: 3px;
-    color: #93C5FD;
+  li {
+    margin-bottom: 5px;
+    text-align: justify;
   }
 
-  /* Equations */
-  .eq-block {
-    background: #111622;
-    border: 1px solid #1E293B;
-    border-radius: 6px;
-    padding: 9px 14px;
-    margin: 9px 0 11px 0;
-    font-family: "JetBrains Mono", ui-monospace, monospace;
-    font-size: 9pt;
-    color: #E2E8F0;
+  /* Inline code - plain monospace, no pill box */
+  code {
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 8.8pt;
+    color: #111111;
+  }
+
+  /* Display Equations - LaTeX style */
+  .eq-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin: 11px 0 12px 0;
+    padding: 2px 0;
     page-break-inside: avoid;
   }
-  .eq-num { color: #64748B; font-size: 8.4pt; }
+  .eq-body {
+    flex: 1;
+    text-align: center;
+    font-family: "Georgia", "Cambria Math", "Times New Roman", serif;
+    font-size: 10.4pt;
+    color: #000000;
+  }
+  .eq-num {
+    width: 36px;
+    text-align: right;
+    font-size: 9.5pt;
+    color: #222222;
+  }
+  .math-it { font-style: italic; }
 
-  /* Figures & Diagrams */
-  .figure-card {
-    background: #111622;
-    border: 1px solid #1E293B;
-    border-radius: 8px;
-    padding: 12px 14px;
-    margin: 12px 0 14px 0;
+  /* Booktabs Tables */
+  .table-wrap {
+    margin: 14px 0 16px 0;
     page-break-inside: avoid;
   }
-  .caption {
-    font-size: 8.5pt;
-    color: #94A3B8;
-    margin-top: 8px;
-    line-height: 1.42;
+  .table-caption {
+    font-size: 9.1pt;
+    line-height: 1.4;
+    color: #111111;
+    margin-bottom: 6px;
+    text-align: left;
   }
-
-  /* Tables */
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 9px 0 13px 0;
-    background: #111622;
-    border: 1px solid #1E293B;
-    border-radius: 6px;
-    overflow: hidden;
-    font-size: 8.6pt;
-    page-break-inside: avoid;
+    border-top: 1.4pt solid #000000;
+    border-bottom: 1.4pt solid #000000;
+    font-size: 8.8pt;
+    line-height: 1.38;
+  }
+  thead tr {
+    border-bottom: 0.75pt solid #000000;
   }
   th {
-    background: #0F1420;
-    color: #94A3B8;
-    font-weight: 600;
+    font-weight: 700;
     text-align: left;
-    padding: 7px 9px;
-    border-bottom: 1px solid #1E293B;
+    padding: 6px 7px;
+    color: #000000;
+    background: #FFFFFF;
   }
   td {
-    padding: 6px 9px;
-    border-bottom: 1px solid #1E293B;
-    color: #CBD5E1;
+    padding: 5.5px 7px;
+    color: #1A1A1A;
     vertical-align: top;
+    border-bottom: 0.35pt solid #E0E0E0;
   }
-  tr:last-child td { border-bottom: none; }
-  tr.highlight { background: #151C32; }
-  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
-  .c-indigo { color: #818CF8; }
-  .c-green { color: #4ADE80; }
-  .c-amber { color: #FBBF24; }
-  .c-red { color: #F87171; }
-  .c-cyan { color: #38BDF8; }
-
-  .kpi-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin: 10px 0 14px 0;
-    page-break-inside: avoid;
+  tbody tr:last-child td {
+    border-bottom: none;
   }
-  .kpi {
-    background: #111622;
-    border: 1px solid #1E293B;
-    border-radius: 6px;
-    padding: 10px 12px;
-  }
-  .kpi-val {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
-    font-size: 14.5pt;
+  tbody tr.row-emphasis td {
     font-weight: 700;
-    line-height: 1.15;
+    background: #F6F6F6;
   }
-  .kpi-lbl {
-    font-size: 7.9pt;
-    color: #94A3B8;
-    margin-top: 3px;
+  .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 8.4pt;
+  }
+  .mono {
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 8.3pt;
   }
 
-  .callout {
-    background: #111622;
-    border: 1px solid #1E293B;
-    border-left: 3px solid #F59E0B;
-    border-radius: 6px;
-    padding: 10px 14px;
-    margin: 11px 0;
+  /* Monochrome Figures */
+  .figure-wrap {
+    margin: 14px 0 16px 0;
+    page-break-inside: avoid;
+    text-align: center;
+  }
+  .figure-box {
+    border: 0.75pt solid #CCCCCC;
+    padding: 10px 10px 8px 10px;
+    background: #FFFFFF;
+  }
+  .figure-caption {
     font-size: 9pt;
-    color: #CBD5E1;
+    line-height: 1.4;
+    color: #222222;
+    margin-top: 7px;
+    text-align: justify;
+  }
+
+  /* Subtle Remark / Note block - academic rule only */
+  .remark {
+    border-left: 2pt solid #111111;
+    padding: 6px 12px;
+    margin: 12px 0 14px 0;
+    background: #FAFAFA;
+    font-size: 9.4pt;
+    line-height: 1.48;
     page-break-inside: avoid;
   }
-  .callout-indigo {
-    border-left-color: #818CF8;
-  }
-  .callout-green {
-    border-left-color: #22C55E;
+
+  /* References */
+  .refs {
+    margin-top: 8px;
   }
   .refs p {
-    font-size: 8.3pt;
+    font-size: 9pt;
+    line-height: 1.44;
     text-align: left;
-    margin-bottom: 4px;
-    color: #94A3B8;
-  }
-  .page-break {
-    page-break-before: always;
+    padding-left: 22px;
+    text-indent: -22px;
+    margin-bottom: 6px;
+    color: #1A1A1A;
   }
 </style>
 </head>
 <body>
 <div class="paper">
 
-  <!-- TITLE & AUTHOR -->
-  <header class="paper-header">
-    <div class="eyebrow">Drosophila Connectome Laboratory &bull; Technical Research Report</div>
-    <h1 class="title">Sparse Spiking Connectome Simulation and Reward-Modulated Arithmetic Learning</h1>
-    <div class="authors">Murad Shirinov &bull; Student ID: B.01.631.23.056</div>
-    <div class="affiliation">
-      Repository: github.com/ConcreteSky/drosophila-connectome-math &bull; Live System: drosophila-connectome-math.vercel.app
-    </div>
-  </header>
+  <!-- TITLE BLOCK -->
+  <div class="title-block">
+    <div class="doc-type">Technical Project Report</div>
+    <h1 class="title">Sparse Spiking Connectome Simulation and Reward-Modulated Arithmetic Learning in <em>Drosophila melanogaster</em></h1>
+    <div class="author-line">Murad Shirinov &mdash; Student ID: B.01.631.23.056</div>
+    <div class="meta-line">Repository: <span class="meta-mono">github.com/ConcreteSky/drosophila-connectome-math</span></div>
+    <div class="meta-line">Live System: <span class="meta-mono">drosophila-connectome-math.vercel.app</span></div>
+  </div>
 
   <!-- ABSTRACT -->
-  <section class="abstract-box">
-    <div class="abstract-label">Abstract</div>
+  <div class="abstract">
+    <div class="abstract-title">Abstract</div>
     <p>
-      This report investigates whether the complete synaptic wiring diagram of an adult <em>Drosophila melanogaster</em> brain can function as a biological computing substrate for discrete logic and arithmetic when trained exclusively with scalar reward (<code>+1</code>) and punishment (<code>&minus;1</code>) signals. We ingest the 2024 FlyWire v783 whole-brain connectome (138,639 proofread neurons, 15,091,983 directed edges, and 54,492,922 weighted synapses) into DuckDB and Parquet, compile it into a Dale's-Law-compliant Compressed Sparse Row (CSR) PyTorch representation, and simulate batched Leaky Integrate-and-Fire (LIF) dynamics across local CPU and GPU backends. At batch size 1, sparse GPU simulation achieves a <strong>12.1&times;</strong> speedup over CPU (129.40 ms vs. 1572.10 ms per 60 ms trial) within a 330.08 MB memory footprint. Under three-factor dopamine-modulated Reward-STDP (R-STDP) and spiking REINFORCE baselines, the connectome reaches <strong>70.0%</strong> held-out accuracy on <code>delayed_xor</code> (versus 40.0% for a matched PyTorch GRU) and exhibits functional collapse (<strong>0.0%</strong>) followed by plastic recovery (<strong>100.0%</strong>) under Central Complex ablation. However, scaling to bit-coded <code>0&ndash;100</code> arithmetic with strict train/test isolation (800 sampled pairs, 200 unseen pairs) reveals an honest scientific boundary: while per-bit unseen accuracy rises above chance (<strong>62.8%</strong> for addition, <strong>67.3%</strong> for subtraction), exact 9-bit integer generalization remains low (<strong>1.0%&ndash;2.5%</strong>), demonstrating that a biological reservoir with a single plastic readout cannot replace multi-layer carry-propagation circuits.
+      This report evaluates whether the complete synaptic wiring diagram of an adult <em>Drosophila melanogaster</em> brain can operate as a biological computing substrate for discrete working-memory logic and arithmetic when trained exclusively with scalar reward (+1) and punishment (&minus;1) feedback. We ingest the FlyWire v783 whole-brain connectome (138,639 proofread neurons, 15,091,983 directed edges, and 54,492,922 weighted synapses) into DuckDB and Parquet, compile it into a Dale's-Law-compliant Compressed Sparse Row (CSR) PyTorch representation, and simulate batched Leaky Integrate-and-Fire (LIF) dynamics across local CPU and GPU backends. At batch size 1, sparse GPU execution achieves a 12.1&times; speedup over CPU (129.40 ms versus 1572.10 ms per 60 ms trial) within a 330.08 MB memory footprint. Under three-factor dopamine-modulated Reward-STDP (R-STDP) and spiking REINFORCE baselines, the connectome reaches 70.0% held-out accuracy on <code>delayed_xor</code> (versus 40.0% for a matched PyTorch GRU) and exhibits functional collapse (0.0%) followed by plastic recovery (100.0%) under Central Complex ablation. Scaling the evaluation to bit-coded 0&ndash;100 arithmetic with strict train/test isolation (800 sampled training pairs, 200 unseen test pairs) establishes a clear empirical boundary: while unseen per-bit accuracy rises well above chance (62.8% for addition, 67.3% for subtraction), exact 9-bit integer generalization remains low (1.0%&ndash;2.5%), demonstrating that a biological spiking reservoir with a single plastic readout cannot substitute for multi-layer carry-propagation circuits.
     </p>
-  </section>
+    <div class="keywords">
+      <strong>Keywords:</strong> <em>Drosophila</em> connectome, FlyWire v783, spiking neural networks, Leaky Integrate-and-Fire, three-factor R-STDP, Dale's Law, lesion ablation, serverless deployment.
+    </div>
+  </div>
 
   <!-- 1. INTRODUCTION -->
-  <h2><span class="sec-num">1.</span>Introduction &amp; Scientific Motivation</h2>
+  <h2>1. Introduction</h2>
   <p>
-    Conventional artificial neural networks rely on uniform, dense tensor architectures trained via global error backpropagation. By contrast, biological brains operate through sparse, heterogeneous, sign-constrained graphs shaped by evolution. With the release of the FlyWire v783 whole-brain connectome of <em>Drosophila melanogaster</em> (Dorkenwald et al., 2024; Shiu et al., 2024), it is now possible to instantiate every proofread neuron and synaptic connection of an adult animal brain in silico. Rather than treating the connectome as a static visualization graph or turning the application into a hardcoded digital calculator, this project asks a concrete empirical question: <em>to what extent can a real insect connectome solve working-memory logic and arithmetic tasks solely through biologically plausible reward (<code>+1</code>) and punishment (<code>&minus;1</code>) plasticity?</em>
+    Standard artificial neural networks rely on dense, homogeneous weight matrices optimized by global error backpropagation. Biological nervous systems operate under fundamentally different constraints: sparse, heterogeneous directed graphs shaped by evolution, strict neurotransmitter sign constraints (Dale's Law), discrete spike-time signaling, and local synaptic plasticity modulated by scalar neuromodulatory signals such as dopamine. With the public release of the FlyWire v783 whole-brain connectome of adult <em>Drosophila melanogaster</em> (Dorkenwald et al., 2024; Shiu et al., 2024), it is now possible to instantiate every proofread neuron and synaptic connection of an entire adult insect brain in simulation.
   </p>
   <p>
-    To answer this rigorously without cherry-picking or memorization, we enforce three strict scientific invariants throughout the entire codebase:
+    Rather than treating the connectome solely as a static graph or building a digital calculator wrapped in biological graphics, this project tests a concrete empirical hypothesis: <em>to what extent can a real insect connectome learn working-memory logic and discrete arithmetic solely through biologically plausible reward (+1) and punishment (&minus;1) plasticity?</em> Answering this question honestly requires separating genuine spiking computation from memorization, hyperparameter overfitting, and software shortcuts.
+  </p>
+  <p>
+    To enforce scientific discipline throughout the codebase, the system obeys three explicit architectural boundaries:
   </p>
   <ol>
-    <li><strong>No Hardcoded Arithmetic Shortcuts:</strong> Predictions are decoded exclusively from spiking population activity in competing descending Motor/Output pools and Mushroom Body Kenyon-cell projections. When the network fails, it fails openly.</li>
-    <li><strong>Strict Train/Test Isolation:</strong> All generalization benchmarks evaluate on held-out <code>(A, B)</code> operand pairs excluded from training, separating reservoir memorization from true algorithmic generalization.</li>
-    <li><strong>Biological &amp; Structural Controls:</strong> Every connectome run is benchmarked against a degree-preserving configuration-model shuffled brain and a matched-budget PyTorch GRU trained under identical 60 ms temporal schedules.</li>
+    <li><strong>No Hardcoded Arithmetic Shortcuts:</strong> Every prediction is decoded exclusively from competing Motor/Output population spikes and Mushroom Body Kenyon-cell projections. When the connectome fails to generalize on unseen operands, the system reports the failure directly.</li>
+    <li><strong>Strict Train/Test Isolation:</strong> All arithmetic and logic evaluations measure performance on held-out operand pairs excluded from training, preventing lookup-table memorization from being reported as algorithmic learning.</li>
+    <li><strong>Structural and Algorithmic Controls:</strong> Real connectome runs are benchmarked against a degree-preserving configuration-model shuffled brain and a matched-budget non-spiking PyTorch GRU trained under identical 60 ms temporal schedules.</li>
   </ol>
   <p>
-    The resulting system spans five integrated layers: (1) reproducible DuckDB/Parquet data ingestion from FlyWire v783, (2) a batched sparse CSR LIF simulator respecting Dale's Law, (3) dual plasticity engines (three-factor dopamine R-STDP and spiking REINFORCE) with state-dependent mistake memory, (4) targeted neuropil and top-5% out-degree hub lesion ablations, and (5) a same-origin Vercel web interface providing real-time 2D anatomical spike visualization and interactive reward feedback.
+    The complete engineering pipeline comprises five layers: (i) reproducible DuckDB/Parquet ingestion of FlyWire v783, (ii) a batched sparse CSR LIF simulator with spike-frequency adaptation and Dale's Law enforcement, (iii) dual plasticity engines (three-factor R-STDP and spiking REINFORCE) with state-dependent error avoidance, (iv) targeted regional and top-5% out-degree hub lesion ablations, and (v) a same-origin Vercel web application pairing a pure-NumPy FastAPI serverless backend with a 60 FPS anatomical Canvas interface.
   </p>
 
-  <!-- 2. CONNECTOME DATASET & ANATOMICAL ARCHITECTURE -->
-  <h2><span class="sec-num">2.</span>FlyWire v783 Ingestion &amp; Anatomical Architecture</h2>
+  <!-- 2. CONNECTOME DATASET AND ANATOMICAL PARTITIONING -->
+  <h2>2. Connectome Dataset and Anatomical Partitioning</h2>
   <p>
-    The structural graph is constructed in <code>scripts/download_connectome.py</code> and <code>src/flybrain_rl/connectome.py</code> from three authoritative FlyWire v783 sources: <code>Completeness_783.csv</code> (neuron proofread registry), <code>Connectivity_783.parquet</code> (directed synapse table), and <code>Supplemental_file1_neuron_annotations.tsv</code> (super-class, cell-class, cell-type, and neurotransmitter polarity). Using DuckDB SQL queries over the Parquet tables, every proofread neuron is assigned a contiguous index <code>0..138,638</code>, and directed edges are weighted by signed synapse counts (<code>Excitatory &times; Connectivity</code>). The compiled graph is persisted to <code>artifacts</code> / <code>data/connectome_csr_v2.pt</code> as a 123.2 MB Compressed Sparse Row (CSR) checkpoint.
+    The structural wiring graph is compiled in <code>scripts/download_connectome.py</code> and <code>src/flybrain_rl/connectome.py</code> from three FlyWire v783 release files: <code>Completeness_783.csv</code> (the proofread neuron registry), <code>Connectivity_783.parquet</code> (directed presynaptic-to-postsynaptic synapse counts), and <code>Supplemental_file1_neuron_annotations.tsv</code> (anatomical super-class, cell-class, cell-type, and neurotransmitter polarity). Using deterministic DuckDB SQL queries over the Parquet tables, each proofread neuron is mapped to a contiguous zero-based integer index <code>0..138,638</code>, and each directed edge is weighted by its signed synapse count (<code>Excitatory &times; Connectivity</code>).
+  </p>
+  <p>
+    The resulting whole-brain graph contains <strong>138,639</strong> proofread neurons, <strong>15,091,983</strong> directed CSR edges, and <strong>54,492,922</strong> total weighted synapses. Compiling these arrays into PyTorch CSR format produces a reusable <strong>123.2 MB</strong> binary checkpoint (<code>data/connectome_csr_v2.pt</code>), eliminating repeated Parquet joins during training and benchmarking.
   </p>
 
-  <div class="kpi-row">
-    <div class="kpi"><div class="kpi-val c-indigo">138,639</div><div class="kpi-lbl">Proofread Neurons</div></div>
-    <div class="kpi"><div class="kpi-val c-cyan">15,091,983</div><div class="kpi-lbl">Directed CSR Edges</div></div>
-    <div class="kpi"><div class="kpi-val c-amber">54,492,922</div><div class="kpi-lbl">Total Weighted Synapses</div></div>
-    <div class="kpi"><div class="kpi-val c-green">123.2 MB</div><div class="kpi-lbl">Compiled CSR Checkpoint</div></div>
+  <h3>2.1 Anatomical Region Partitioning</h3>
+  <p>
+    To align sensory inputs, associative memory, midline working-memory routing, and motor readouts with biological anatomy, <code>map_region(super_class, cell_class, cell_type)</code> partitions all 138,639 neurons into six canonical dorsal regions anchored at normalized <code>[0, 1]&sup2;</code> coordinates defined in <code>REGION_CENTERS_2D</code> (<code>src/flybrain_rl/config.py</code>). Table 1 reports the matching rules, dorsal centers, functional roles, and exact neuron counts queried from DuckDB.
+  </p>
+
+  <div class="table-wrap">
+    <div class="table-caption">
+      <strong>Table 1:</strong> Anatomical region partitioning of the 138,639 FlyWire v783 neurons in <code>src/flybrain_rl/connectome.py</code>. Sensory and Antennal Lobe populations are grouped in the UI as the Signal Entry layer.
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Anatomical Region</th>
+          <th>Dorsal Center [x, y]</th>
+          <th>Annotation Rule (<code>map_region</code>)</th>
+          <th>Functional Role</th>
+          <th class="num">Neurons</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Sensory / Antennal Lobe</td>
+          <td class="mono">(0.16, 0.50) / (0.34, 0.64)</td>
+          <td class="mono">sensory, optic, alpn, alln, AL*, PN*</td>
+          <td>Dual-rail operand &amp; timing entry</td>
+          <td class="num">102,444</td>
+        </tr>
+        <tr>
+          <td>Lateral Horn</td>
+          <td class="mono">(0.64, 0.38)</td>
+          <td class="mono">lh, lateral_horn, LHON*, LHLN*, default</td>
+          <td>Lateral protocerebral relay</td>
+          <td class="num">26,227</td>
+        </tr>
+        <tr>
+          <td>Mushroom Body</td>
+          <td class="mono">(0.48, 0.34)</td>
+          <td class="mono">kenyon, mbon, mbin, dan, KC*, MBON*, PAM*</td>
+          <td>Kenyon-cell expansion &amp; R-STDP</td>
+          <td class="num">5,608</td>
+        </tr>
+        <tr>
+          <td>Central Complex</td>
+          <td class="mono">(0.50, 0.54)</td>
+          <td class="mono">cx, central_complex, EPG*, PFN*, PFL*, PEN*</td>
+          <td>Midline working-memory hub</td>
+          <td class="num">2,875</td>
+        </tr>
+        <tr>
+          <td>Motor / Output</td>
+          <td class="mono">(0.82, 0.52)</td>
+          <td class="mono">motor, descending, endocrine, ascending</td>
+          <td>Competing decision pools</td>
+          <td class="num">1,485</td>
+        </tr>
+        <tr class="row-emphasis">
+          <td>Total Connectome</td>
+          <td class="mono">&mdash;</td>
+          <td class="mono">All proofread FlyWire v783 neurons</td>
+          <td>Whole-brain directed graph</td>
+          <td class="num">138,639</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <h3>2.1 Anatomical Region Mapping &amp; Dorsal 2D Coordinates</h3>
-  <p>
-    To preserve biological interpretability during both simulation and interactive visualization, <code>map_region(super_class, cell_class, cell_type)</code> partitions all 138,639 neurons into six canonical dorsal regions anchored at normalized <code>[0, 1]&sup2;</code> anatomical coordinates defined in <code>REGION_CENTERS_2D</code> (<code>src/flybrain_rl/config.py</code>). Sensory and Antennal Lobe neurons serve as dual-rail spike entry channels, the Lateral Horn acts as an innate protocerebral relay, the Mushroom Body provides Kenyon-cell expansion and R-STDP associative plasticity, the Central Complex serves as the midline recurrent hub, and Motor/Output descending pools emit competing class decisions.
-  </p>
+  <div class="figure-wrap">
+    <div class="figure-box">
+      <svg viewBox="0 0 740 195" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;background:#FFFFFF;">
+        <defs>
+          <marker id="arr-bw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#222222" />
+          </marker>
+        </defs>
+        <ellipse cx="370" cy="98" rx="325" ry="82" fill="#FAFAFA" stroke="#BBBBBB" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="16" y="18" fill="#555555" font-family="Georgia, serif" font-size="9" font-style="italic">Canonical Dorsal 2D Projection [0, 1]^2 (REGION_CENTERS_2D)</text>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Anatomical Region</th>
-        <th>Dorsal Center [x, y]</th>
-        <th>Annotation Matching Rule (<code>map_region</code>)</th>
-        <th>Functional Role</th>
-        <th>Neuron Count</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="c-cyan">Sensory / Antennal Lobe</td>
-        <td class="mono">(0.16, 0.50) / (0.34, 0.64)</td>
-        <td class="mono">sensory, optic, alpn, alln, AL*, PN*</td>
-        <td>Dual-rail operand &amp; timing spike entry</td>
-        <td class="mono">102,444</td>
-      </tr>
-      <tr>
-        <td>Lateral Horn</td>
-        <td class="mono">(0.64, 0.38)</td>
-        <td class="mono">lh, lateral_horn, LHON*, LHLN*, default</td>
-        <td>Lateral protocerebral interneuron relay</td>
-        <td class="mono">26,227</td>
-      </tr>
-      <tr>
-        <td class="c-indigo">Mushroom Body</td>
-        <td class="mono">(0.48, 0.34)</td>
-        <td class="mono">kenyon, mbon, mbin, dan, KC*, MBON*, PAM*</td>
-        <td>Kenyon-cell expansion &amp; R-STDP plasticity</td>
-        <td class="mono">5,608</td>
-      </tr>
-      <tr>
-        <td class="c-amber">Central Complex</td>
-        <td class="mono">(0.50, 0.54)</td>
-        <td class="mono">cx, central_complex, EPG*, PFN*, PFL*, PEN*</td>
-        <td>Midline integration &amp; working memory</td>
-        <td class="mono">2,875</td>
-      </tr>
-      <tr>
-        <td class="c-green">Motor / Output</td>
-        <td class="mono">(0.82, 0.52)</td>
-        <td class="mono">motor, descending, endocrine, ascending</td>
-        <td>Competing descending decision pools</td>
-        <td class="mono">1,485</td>
-      </tr>
-    </tbody>
-  </table>
+        <!-- Directed anatomical pathways -->
+        <line x1="136" y1="98" x2="242" y2="132" stroke="#333333" stroke-width="1.1" marker-end="url(#arr-bw)"/>
+        <line x1="136" y1="98" x2="342" y2="62" stroke="#333333" stroke-width="1.1" marker-end="url(#arr-bw)"/>
+        <line x1="274" y1="132" x2="342" y2="66" stroke="#333333" stroke-width="1.1" marker-end="url(#arr-bw)"/>
+        <line x1="274" y1="132" x2="354" y2="114" stroke="#333333" stroke-width="1.1" marker-end="url(#arr-bw)"/>
+        <line x1="378" y1="62" x2="472" y2="70" stroke="#333333" stroke-width="1.1" marker-end="url(#arr-bw)"/>
+        <line x1="392" y1="114" x2="594" y2="100" stroke="#333333" stroke-width="1.2" marker-end="url(#arr-bw)"/>
+        <line x1="378" y1="62" x2="594" y2="96" stroke="#111111" stroke-width="1.5" marker-end="url(#arr-bw)"/>
+        <line x1="506" y1="72" x2="594" y2="94" stroke="#555555" stroke-width="1.0" stroke-dasharray="3,2" marker-end="url(#arr-bw)"/>
 
-  <div class="figure-card">
-    <svg viewBox="0 0 780 210" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;background:#0D121D;border-radius:6px;">
-      <defs>
-        <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-          <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569" />
-        </marker>
-      </defs>
-      <!-- Dorsal Brain Outline -->
-      <ellipse cx="390" cy="105" rx="340" ry="86" fill="#111622" stroke="#1E293B" stroke-width="1.5" stroke-dasharray="4,4"/>
-      <text x="20" y="22" fill="#64748B" font-family="JetBrains Mono, monospace" font-size="8.5">Dorsal 2D Anatomical Projection [0, 1]^2 (REGION_CENTERS_2D)</text>
+        <!-- Region Nodes -->
+        <circle cx="112" cy="98" r="24" fill="#FFFFFF" stroke="#111111" stroke-width="1.4"/>
+        <text x="112" y="95" fill="#000000" font-family="Georgia, serif" font-size="8.8" font-weight="700" text-anchor="middle">Sensory</text>
+        <text x="112" y="106" fill="#444444" font-family="Consolas, monospace" font-size="7.4" text-anchor="middle">(0.16, 0.50)</text>
 
-      <!-- Connections -->
-      <line x1="138" y1="105" x2="258" y2="138" stroke="#38BDF8" stroke-width="1.4" opacity="0.65" marker-end="url(#arr2)"/>
-      <line x1="138" y1="105" x2="365" y2="68" stroke="#38BDF8" stroke-width="1.4" opacity="0.55" marker-end="url(#arr2)"/>
-      <line x1="275" y1="138" x2="365" y2="68" stroke="#818CF8" stroke-width="1.4" opacity="0.7" marker-end="url(#arr2)"/>
-      <line x1="275" y1="138" x2="378" y2="118" stroke="#FBBF24" stroke-width="1.4" opacity="0.65" marker-end="url(#arr2)"/>
-      <line x1="385" y1="68" x2="495" y2="76" stroke="#818CF8" stroke-width="1.4" opacity="0.65" marker-end="url(#arr2)"/>
-      <line x1="395" y1="118" x2="625" y2="108" stroke="#FBBF24" stroke-width="1.4" opacity="0.65" marker-end="url(#arr2)"/>
-      <line x1="395" y1="68" x2="625" y2="108" stroke="#818CF8" stroke-width="1.6" opacity="0.8" marker-end="url(#arr2)"/>
-      <line x1="510" y1="76" x2="625" y2="108" stroke="#94A3B8" stroke-width="1.4" opacity="0.6" marker-end="url(#arr2)"/>
+        <circle cx="256" cy="136" r="22" fill="#FFFFFF" stroke="#111111" stroke-width="1.2"/>
+        <text x="256" y="133" fill="#000000" font-family="Georgia, serif" font-size="8.4" font-weight="700" text-anchor="middle">Antennal</text>
+        <text x="256" y="144" fill="#444444" font-family="Consolas, monospace" font-size="7.2" text-anchor="middle">(0.34, 0.64)</text>
 
-      <!-- Nodes -->
-      <circle cx="125" cy="105" r="22" fill="#0F172A" stroke="#38BDF8" stroke-width="1.8"/>
-      <text x="125" y="103" fill="#38BDF8" font-family="JetBrains Mono, monospace" font-size="8.5" font-weight="700" text-anchor="middle">Sensory</text>
-      <text x="125" y="114" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="7.2" text-anchor="middle">(0.16, 0.50)</text>
+        <circle cx="358" cy="60" r="26" fill="#F2F2F2" stroke="#000000" stroke-width="1.8"/>
+        <text x="358" y="57" fill="#000000" font-family="Georgia, serif" font-size="8.6" font-weight="700" text-anchor="middle">Mushroom</text>
+        <text x="358" y="68" fill="#222222" font-family="Consolas, monospace" font-size="7.3" text-anchor="middle">Body (5,608)</text>
 
-      <circle cx="265" cy="140" r="20" fill="#0F172A" stroke="#38BDF8" stroke-width="1.6"/>
-      <text x="265" y="138" fill="#38BDF8" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">Antennal</text>
-      <text x="265" y="149" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">(0.34, 0.64)</text>
+        <circle cx="372" cy="116" r="23" fill="#F2F2F2" stroke="#000000" stroke-width="1.5"/>
+        <text x="372" y="113" fill="#000000" font-family="Georgia, serif" font-size="8.4" font-weight="700" text-anchor="middle">Central Cx</text>
+        <text x="372" y="124" fill="#333333" font-family="Consolas, monospace" font-size="7.2" text-anchor="middle">(0.50, 0.54)</text>
 
-      <circle cx="375" cy="68" r="24" fill="#0F172A" stroke="#818CF8" stroke-width="2"/>
-      <text x="375" y="65" fill="#818CF8" font-family="JetBrains Mono, monospace" font-size="8.2" font-weight="700" text-anchor="middle">Mushroom</text>
-      <text x="375" y="76" fill="#CBD5E1" font-family="JetBrains Mono, monospace" font-size="7.2" text-anchor="middle">Body (5.6K)</text>
+        <circle cx="488" cy="72" r="22" fill="#FFFFFF" stroke="#444444" stroke-width="1.2"/>
+        <text x="488" y="69" fill="#000000" font-family="Georgia, serif" font-size="8.4" font-weight="700" text-anchor="middle">Lat. Horn</text>
+        <text x="488" y="80" fill="#444444" font-family="Consolas, monospace" font-size="7.2" text-anchor="middle">(0.64, 0.38)</text>
 
-      <circle cx="390" cy="120" r="21" fill="#0F172A" stroke="#FBBF24" stroke-width="1.8"/>
-      <text x="390" y="118" fill="#FBBF24" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">Central Cx</text>
-      <text x="390" y="129" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">(0.50, 0.54)</text>
-
-      <circle cx="502" cy="76" r="20" fill="#0F172A" stroke="#94A3B8" stroke-width="1.5"/>
-      <text x="502" y="74" fill="#E2E8F0" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">Lat. Horn</text>
-      <text x="502" y="85" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">(0.64, 0.38)</text>
-
-      <circle cx="640" cy="108" r="24" fill="#0F172A" stroke="#4ADE80" stroke-width="2"/>
-      <text x="640" y="105" fill="#4ADE80" font-family="JetBrains Mono, monospace" font-size="8.2" font-weight="700" text-anchor="middle">Motor/Out</text>
-      <text x="640" y="116" fill="#CBD5E1" font-family="JetBrains Mono, monospace" font-size="7.2" text-anchor="middle">(0.82, 0.52)</text>
-    </svg>
-    <div class="caption">
-      <strong>Figure 1:</strong> Canonical dorsal 2D projection of the six FlyWire v783 anatomical regions used for both spatial subnetwork sampling and 60 FPS Canvas spike visualization.
+        <circle cx="622" cy="98" r="26" fill="#EAEAEA" stroke="#000000" stroke-width="1.8"/>
+        <text x="622" y="95" fill="#000000" font-family="Georgia, serif" font-size="8.6" font-weight="700" text-anchor="middle">Motor/Out</text>
+        <text x="622" y="106" fill="#222222" font-family="Consolas, monospace" font-size="7.3" text-anchor="middle">(0.82, 0.52)</text>
+      </svg>
+    </div>
+    <div class="figure-caption">
+      <strong>Figure 1:</strong> Canonical dorsal 2D anatomical projection of the six FlyWire v783 regions defined in <code>REGION_CENTERS_2D</code>. Shaded nodes indicate the primary plastic associative center (Mushroom Body), midline working-memory hub (Central Complex), and competing decision readout (Motor/Output).
     </div>
   </div>
 
-  <h3>2.2 DuckDB Parquet Schema &amp; CSR Memory Layout</h3>
+  <h3>2.2 DuckDB Parquet Schema and CSR Memory Layout</h3>
   <p>
-    During preprocessing, DuckDB executes deterministic SQL joins ordered by contiguous neuron index <code>idx</code> and postsynaptic-presynaptic pair <code>(post_idx, pre_idx)</code> to materialize <code>neurons.parquet</code> and <code>edges.parquet</code> before compiling the PyTorch CSR tensors:
+    During ingestion, DuckDB executes deterministic SQL joins ordered by contiguous neuron index <code>idx</code> and directed pair <code>(post_idx, pre_idx)</code> to write <code>neurons.parquet</code> and <code>edges.parquet</code>. Table 2 lists the exact tensor schemas stored in the compiled CSR checkpoint <code>connectome_csr_v2.pt</code>.
   </p>
-  <table>
-    <thead>
-      <tr>
-        <th>Compiled Tensor / Column</th>
-        <th>Dtype &amp; Shape</th>
-        <th>Source / Invariant</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td class="mono">crow_indices</td><td class="mono">int64 [138,640]</td><td>CSR row pointers over postsynaptic neuron index</td></tr>
-      <tr><td class="mono">col_indices</td><td class="mono">int64 [15,091,983]</td><td>Presynaptic neuron indices <code>0..138,638</code></td></tr>
-      <tr><td class="mono">values</td><td class="mono">float32 [15,091,983]</td><td>Signed synapse counts (<code>Excitatory &times; Connectivity</code>)</td></tr>
-      <tr><td class="mono">signs</td><td class="mono">int8 [138,639]</td><td>Dale's Law polarity (<code>+1</code> cholinergic, <code>&minus;1</code> GABA/glutamate)</td></tr>
-      <tr><td class="mono">region_ids / coords_2d</td><td class="mono">int8 [N] / float32 [N, 2]</td><td>Canonical region ID <code>0..5</code> and dorsal <code>[x, y]</code> coordinates</td></tr>
-    </tbody>
-  </table>
+
+  <div class="table-wrap">
+    <div class="table-caption">
+      <strong>Table 2:</strong> Tensor schema of the compiled whole-brain CSR checkpoint (<code>connectome_csr_v2.pt</code>, 123.2 MB).
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Tensor Field</th>
+          <th>Data Type &amp; Shape</th>
+          <th>Structural Invariant</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">crow_indices</td><td class="mono">int64 [138,640]</td><td>CSR row pointer offsets indexed by postsynaptic neuron</td></tr>
+        <tr><td class="mono">col_indices</td><td class="mono">int64 [15,091,983]</td><td>Presynaptic neuron indices strictly within <code>0..138,638</code></td></tr>
+        <tr><td class="mono">values</td><td class="mono">float32 [15,091,983]</td><td>Signed synapse counts (<code>Excitatory &times; Connectivity</code>)</td></tr>
+        <tr><td class="mono">signs</td><td class="mono">int8 [138,639]</td><td>Dale's Law sign vector (+1 cholinergic, &minus;1 GABA/glutamatergic)</td></tr>
+        <tr><td class="mono">region_ids</td><td class="mono">int8 [138,639]</td><td>Anatomical region identifier in <code>0..5</code></td></tr>
+        <tr><td class="mono">coords_2d</td><td class="mono">float32 [138,639, 2]</td><td>Normalized dorsal 2D coordinates in <code>[0, 1]&sup2;</code></td></tr>
+      </tbody>
+    </table>
+  </div>
 
   <!-- 3. SYSTEM ARCHITECTURE -->
-  <h2><span class="sec-num">3.</span>End-to-End System Architecture</h2>
+  <h2>3. End-to-End System Architecture</h2>
   <p>
-    Figure 2 illustrates the full software and data-flow architecture across offline GPU training, serverless subnetwork export, and live browser interaction. Offline experiments in <code>src/flybrain_rl/</code> execute on the complete 138,639-neuron CSR graph using PyTorch sparse matrix multiplication (<code>torch.mv</code> / <code>torch.sparse.mm</code>). For zero-cost cloud deployment within Vercel's 250 MB unzipped serverless limit, <code>scripts/export_serverless_artifacts.py</code> extracts a 3,000-landmark dorsal subnetwork (61,453 directed edges) and exports trained weights into <code>artifacts/serverless/subnetwork.npz</code> (4.13 MB) and <code>layout_and_summary.json</code> (290.5 KB), which are executed by pure-NumPy <code>np.bincount</code> kernels in <code>api/index.py</code>.
+    The codebase separates full-scale offline experimentation from lightweight cloud inference. Offline scripts in <code>src/flybrain_rl/</code> execute on the full 138,639-neuron CSR graph using PyTorch sparse kernels (<code>torch.mv</code> at batch size 1 and <code>torch.sparse.mm</code> for batched runs). To deploy an interactive simulator within Vercel's 250 MB unzipped serverless bundle limit—which precludes PyTorch and CUDA runtimes—<code>scripts/export_serverless_artifacts.py</code> extracts a 3,000-landmark induced dorsal subnetwork (61,453 directed edges) together with trained 1,024-Kenyon-cell readout weights into <code>artifacts/serverless/subnetwork.npz</code> (4.13 MB) and <code>layout_and_summary.json</code> (290.5 KB). Figure 2 summarizes the complete data flow, and Table 3 maps each repository module to its responsibility.
   </p>
 
-  <div class="figure-card">
-    <svg viewBox="0 0 820 220" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;background:#0D121D;border-radius:6px;">
-      <defs>
-        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748B" />
-        </marker>
-      </defs>
-      <!-- Stage 1 -->
-      <rect x="14" y="24" width="142" height="74" rx="6" fill="#111622" stroke="#38BDF8" stroke-width="1.3"/>
-      <text x="85" y="46" fill="#38BDF8" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="700" text-anchor="middle">1. FlyWire v783</text>
-      <text x="85" y="63" fill="#CBD5E1" font-family="Inter, sans-serif" font-size="8.5" text-anchor="middle">DuckDB + Parquet</text>
-      <text x="85" y="78" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">138,639N / 15.09ME</text>
+  <div class="figure-wrap">
+    <div class="figure-box">
+      <svg viewBox="0 0 760 195" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;background:#FFFFFF;">
+        <defs>
+          <marker id="arr-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#111111" />
+          </marker>
+        </defs>
+        <!-- Top Row -->
+        <rect x="10" y="16" width="128" height="68" rx="3" fill="#FFFFFF" stroke="#111111" stroke-width="1.2"/>
+        <text x="74" y="36" fill="#000000" font-family="Georgia, serif" font-size="9" font-weight="700" text-anchor="middle">1. FlyWire v783</text>
+        <text x="74" y="52" fill="#333333" font-family="Georgia, serif" font-size="8.2" text-anchor="middle">DuckDB + Parquet</text>
+        <text x="74" y="68" fill="#555555" font-family="Consolas, monospace" font-size="7.6" text-anchor="middle">138,639N / 15.09ME</text>
 
-      <!-- Arrow 1->2 -->
-      <line x1="156" y1="61" x2="188" y2="61" stroke="#64748B" stroke-width="1.4" marker-end="url(#arr)"/>
+        <line x1="138" y1="50" x2="164" y2="50" stroke="#111111" stroke-width="1.2" marker-end="url(#arr-s)"/>
 
-      <!-- Stage 2 -->
-      <rect x="190" y="24" width="146" height="74" rx="6" fill="#111622" stroke="#818CF8" stroke-width="1.3"/>
-      <text x="263" y="46" fill="#818CF8" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="700" text-anchor="middle">2. SpikingFlyBrain</text>
-      <text x="263" y="63" fill="#CBD5E1" font-family="Inter, sans-serif" font-size="8.5" text-anchor="middle">Batched CSR LIF</text>
-      <text x="263" y="78" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">60 ms / Dale's Law</text>
+        <rect x="166" y="16" width="136" height="68" rx="3" fill="#FFFFFF" stroke="#111111" stroke-width="1.2"/>
+        <text x="234" y="36" fill="#000000" font-family="Georgia, serif" font-size="9" font-weight="700" text-anchor="middle">2. SpikingFlyBrain</text>
+        <text x="234" y="52" fill="#333333" font-family="Georgia, serif" font-size="8.2" text-anchor="middle">CSR LIF + Adaptation</text>
+        <text x="234" y="68" fill="#555555" font-family="Consolas, monospace" font-size="7.6" text-anchor="middle">60 ms / Dale's Law</text>
 
-      <!-- Arrow 2->3 -->
-      <line x1="336" y1="61" x2="368" y2="61" stroke="#64748B" stroke-width="1.4" marker-end="url(#arr)"/>
+        <line x1="302" y1="50" x2="328" y2="50" stroke="#111111" stroke-width="1.2" marker-end="url(#arr-s)"/>
 
-      <!-- Stage 3 -->
-      <rect x="370" y="24" width="150" height="74" rx="6" fill="#111622" stroke="#F59E0B" stroke-width="1.3"/>
-      <text x="445" y="46" fill="#FBBF24" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="700" text-anchor="middle">3. Plasticity Engine</text>
-      <text x="445" y="63" fill="#CBD5E1" font-family="Inter, sans-serif" font-size="8.5" text-anchor="middle">1,024-KC + R-STDP</text>
-      <text x="445" y="78" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">r in {+1, -1}</text>
+        <rect x="330" y="16" width="138" height="68" rx="3" fill="#F4F4F4" stroke="#000000" stroke-width="1.5"/>
+        <text x="399" y="36" fill="#000000" font-family="Georgia, serif" font-size="9" font-weight="700" text-anchor="middle">3. Plasticity Engine</text>
+        <text x="399" y="52" fill="#333333" font-family="Georgia, serif" font-size="8.2" text-anchor="middle">1,024-KC + R-STDP</text>
+        <text x="399" y="68" fill="#555555" font-family="Consolas, monospace" font-size="7.6" text-anchor="middle">r in {+1, -1}</text>
 
-      <!-- Arrow 3->4 -->
-      <line x1="520" y1="61" x2="552" y2="61" stroke="#64748B" stroke-width="1.4" marker-end="url(#arr)"/>
+        <line x1="468" y1="50" x2="494" y2="50" stroke="#111111" stroke-width="1.2" marker-end="url(#arr-s)"/>
 
-      <!-- Stage 4 -->
-      <rect x="554" y="24" width="122" height="74" rx="6" fill="#111622" stroke="#4ADE80" stroke-width="1.3"/>
-      <text x="615" y="46" fill="#4ADE80" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="700" text-anchor="middle">4. Export (.npz)</text>
-      <text x="615" y="63" fill="#CBD5E1" font-family="Inter, sans-serif" font-size="8.5" text-anchor="middle">3,000 Landmarks</text>
-      <text x="615" y="78" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">4.13 MB / 61.4K E</text>
+        <rect x="496" y="16" width="118" height="68" rx="3" fill="#FFFFFF" stroke="#111111" stroke-width="1.2"/>
+        <text x="555" y="36" fill="#000000" font-family="Georgia, serif" font-size="9" font-weight="700" text-anchor="middle">4. Export (.npz)</text>
+        <text x="555" y="52" fill="#333333" font-family="Georgia, serif" font-size="8.2" text-anchor="middle">3,000 Landmarks</text>
+        <text x="555" y="68" fill="#555555" font-family="Consolas, monospace" font-size="7.6" text-anchor="middle">4.13 MB / 61.4K E</text>
 
-      <!-- Arrow 4->5 -->
-      <line x1="676" y1="61" x2="704" y2="61" stroke="#64748B" stroke-width="1.4" marker-end="url(#arr)"/>
+        <line x1="614" y1="50" x2="640" y2="50" stroke="#111111" stroke-width="1.2" marker-end="url(#arr-s)"/>
 
-      <!-- Stage 5 -->
-      <rect x="706" y="24" width="100" height="74" rx="6" fill="#111622" stroke="#38BDF8" stroke-width="1.3"/>
-      <text x="756" y="46" fill="#38BDF8" font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="700" text-anchor="middle">5. Vercel UI</text>
-      <text x="756" y="63" fill="#CBD5E1" font-family="Inter, sans-serif" font-size="8.5" text-anchor="middle">FastAPI + React</text>
-      <text x="756" y="78" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">60 FPS Canvas</text>
+        <rect x="642" y="16" width="108" height="68" rx="3" fill="#FFFFFF" stroke="#111111" stroke-width="1.2"/>
+        <text x="696" y="36" fill="#000000" font-family="Georgia, serif" font-size="9" font-weight="700" text-anchor="middle">5. Vercel App</text>
+        <text x="696" y="52" fill="#333333" font-family="Georgia, serif" font-size="8.2" text-anchor="middle">FastAPI + React</text>
+        <text x="696" y="68" fill="#555555" font-family="Consolas, monospace" font-size="7.6" text-anchor="middle">60 FPS Canvas</text>
 
-      <!-- Bottom Control & Feedback Loop -->
-      <rect x="190" y="132" width="330" height="62" rx="6" fill="#0F1420" stroke="#1E293B" stroke-width="1.2"/>
-      <text x="355" y="153" fill="#E2E8F0" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" text-anchor="middle">Scientific Controls &amp; Lesion Ablations</text>
-      <text x="355" y="170" fill="#94A3B8" font-family="Inter, sans-serif" font-size="8.5" text-anchor="middle">Shuffled Connectome &bull; PyTorch GRU &bull; CX / MB / Top-5% Hub Silencing</text>
-      <text x="355" y="184" fill="#64748B" font-family="JetBrains Mono, monospace" font-size="7.8" text-anchor="middle">Strict 800/200 unseen split for 0-100 bit-coded arithmetic</text>
+        <!-- Bottom Boxes -->
+        <rect x="166" y="118" width="302" height="58" rx="3" fill="#FAFAFA" stroke="#555555" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="317" y="137" fill="#000000" font-family="Georgia, serif" font-size="8.8" font-weight="700" text-anchor="middle">Scientific Controls &amp; Lesion Ablations</text>
+        <text x="317" y="152" fill="#333333" font-family="Georgia, serif" font-size="8.1" text-anchor="middle">Shuffled Connectome &bull; PyTorch GRU &bull; CX / MB / Top-5% Hubs</text>
+        <text x="317" y="166" fill="#555555" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">Strict 800 / 200 unseen split for 0-100 arithmetic</text>
+        <line x1="234" y1="118" x2="234" y2="85" stroke="#444444" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#arr-s)"/>
+        <line x1="399" y1="84" x2="399" y2="117" stroke="#444444" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#arr-s)"/>
 
-      <line x1="263" y1="132" x2="263" y2="99" stroke="#64748B" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#arr)"/>
-      <line x1="445" y1="98" x2="445" y2="131" stroke="#64748B" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#arr)"/>
-
-      <rect x="554" y="132" width="252" height="62" rx="6" fill="#0F1420" stroke="#1E293B" stroke-width="1.2"/>
-      <text x="680" y="153" fill="#4ADE80" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" text-anchor="middle">Live Interactive Dopamine Loop</text>
-      <text x="680" y="170" fill="#94A3B8" font-family="Inter, sans-serif" font-size="8.5" text-anchor="middle">POST /api/brain/solve &rarr; User (+1/-1) &rarr; /feedback</text>
-      <text x="680" y="184" fill="#64748B" font-family="JetBrains Mono, monospace" font-size="7.8" text-anchor="middle">Pure-NumPy np.bincount CSR SpMV (&lt;250 MB bundle)</text>
-      <line x1="756" y1="98" x2="756" y2="131" stroke="#4ADE80" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#arr)"/>
-    </svg>
-    <div class="caption">
-      <strong>Figure 2:</strong> End-to-end architecture bridging full-scale FlyWire v783 GPU simulation (<code>138,639</code> neurons, <code>15.09M</code> edges) with the <code>3,000</code>-landmark pure-NumPy Vercel serverless deployment.
+        <rect x="496" y="118" width="254" height="58" rx="3" fill="#FAFAFA" stroke="#555555" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="623" y="137" fill="#000000" font-family="Georgia, serif" font-size="8.8" font-weight="700" text-anchor="middle">Interactive Dopamine Feedback Loop</text>
+        <text x="623" y="152" fill="#333333" font-family="Consolas, monospace" font-size="7.7" text-anchor="middle">POST /api/brain/solve -&gt; (+1/-1) -&gt; /feedback</text>
+        <text x="623" y="166" fill="#555555" font-family="Consolas, monospace" font-size="7.5" text-anchor="middle">Pure-NumPy np.bincount CSR SpMV (&lt;250 MB)</text>
+        <line x1="696" y1="84" x2="696" y2="117" stroke="#444444" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#arr-s)"/>
+      </svg>
+    </div>
+    <div class="figure-caption">
+      <strong>Figure 2:</strong> End-to-end software architecture linking full-scale FlyWire v783 GPU simulation (138,639 neurons, 15.09M edges) with the 3,000-landmark pure-NumPy Vercel serverless deployment.
     </div>
   </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Module Path</th>
-        <th>Primary Responsibility</th>
-        <th>Key Classes / Entrypoints</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="mono">src/flybrain_rl/config.py</td>
-        <td>Canonical region list, dorsal 2D centers, LIF &amp; RL hyperparameters</td>
-        <td class="mono">LIFConfig, TrainingConfig, REGION_CENTERS_2D</td>
-      </tr>
-      <tr>
-        <td class="mono">src/flybrain_rl/connectome.py</td>
-        <td>DuckDB/Parquet loader, CSR builder, degree-preserving rewiring</td>
-        <td class="mono">ConnectomeGraph, map_region, shuffle_graph</td>
-      </tr>
-      <tr>
-        <td class="mono">src/flybrain_rl/brain.py</td>
-        <td>Batched GPU/CPU sparse CSR LIF dynamics, adaptation, lesions</td>
-        <td class="mono">SpikingFlyBrain, set_lesion, step</td>
-      </tr>
-      <tr>
-        <td class="mono">src/flybrain_rl/encoding.py</td>
-        <td>Dual-rail sensory spike pools, go-cue, competing output pools</td>
-        <td class="mono">PopulationEncoderDecoder, TrialSchedule</td>
-      </tr>
-      <tr>
-        <td class="mono">src/flybrain_rl/train.py</td>
-        <td>1,024-KC projection, 3-factor R-STDP, REINFORCE, GRU baseline</td>
-        <td class="mono">SpikingPolicyBase, RSTDPAgent, ReinforceAgent</td>
-      </tr>
-      <tr>
-        <td class="mono">api/index.py</td>
-        <td>Stateless/in-memory FastAPI + NumPy CSR inference &amp; live feedback</td>
-        <td class="mono">ServerlessBrainEngine, _make_problem_vecs</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <!-- 4. MATHEMATICAL FORMULATION -->
-  <h2><span class="sec-num">4.</span>Mathematical Formulation of Spiking Dynamics &amp; Plasticity</h2>
-
-  <h3>4.1 Batched Leaky Integrate-and-Fire (LIF) Dynamics with Adaptation</h3>
-  <p>
-    In <code>SpikingFlyBrain</code> (<code>src/flybrain_rl/brain.py</code>), neural activity is simulated at discrete step <code>&Delta;t = 1.0 ms</code> over a <code>T = 60 ms</code> trial window for batch size <code>B</code>. Pre-computed edge weights are scaled by <code>weight_scale = 2.0</code>. At each step <code>t</code>, synaptic currents decay exponentially with time constant <code>&tau;<sub>syn</sub> = 5.0 ms</code> (<code>&beta; = e<sup>&minus;&Delta;t/&tau;<sub>syn</sub></sup></code>) while integrating incoming presynaptic spikes through the transposed sparse CSR matrix <code>W<sup>T</sup></code> and external sensory drive <code>I<sub>ext</sub>(t)</code>:
-  </p>
-  <div class="eq-block">
-    <span>I<sub>syn</sub>(t) = &beta; I<sub>syn</sub>(t&minus;1) + W<sup>T</sup> s(t&minus;1) + I<sub>ext</sub>(t)</span>
-    <span class="eq-num">(1)</span>
-  </div>
-  <p>
-    Membrane potentials <code>V(t)</code> integrate toward resting potential <code>V<sub>rest</sub> = &minus;52.0 mV</code> with membrane time constant <code>&tau;<sub>m</sub> = 20.0 ms</code> (<code>&alpha; = e<sup>&minus;&Delta;t/&tau;<sub>m</sub></sup></code>) and resistance <code>R<sub>m</sub> = 1.0</code>. To prevent runaway bursting in high-degree interneurons, each neuron also maintains an adaptive threshold offset <code>&theta;<sub>adapt</sub>(t)</code> that decays with <code>&tau;<sub>adapt</sub> = 40.0 ms</code> (<code>&gamma;<sub>adapt</sub> = e<sup>&minus;&Delta;t/&tau;<sub>adapt</sub></sup></code>) and increments by <code>0.4 mV</code> per spike:
-  </p>
-  <div class="eq-block">
-    <span>V(t) = &alpha; V(t&minus;1) + (1 &minus; &alpha;)(V<sub>rest</sub> + R<sub>m</sub> I<sub>syn</sub>(t))</span>
-    <span class="eq-num">(2)</span>
-  </div>
-  <div class="eq-block">
-    <span>s(t) = 1[V(t) &ge; V<sub>thresh</sub> + &theta;<sub>adapt</sub>(t) &and; refrac(t) = 0], &nbsp;&nbsp; &theta;<sub>adapt</sub>(t+1) = &gamma;<sub>adapt</sub> &theta;<sub>adapt</sub>(t) + 0.4 s(t)</span>
-    <span class="eq-num">(3)</span>
-  </div>
-  <p>
-    Firing neurons reset immediately to <code>V<sub>reset</sub> = &minus;52.0 mV</code> and enter a <code>refrac_steps = 2 ms</code> refractory period. An active binary <code>active_mask</code> clamps lesioned neurons at <code>V<sub>rest</sub></code> and zeroes their spike output, enabling clean regional and hub ablations without mutating CSR topology.
-  </p>
-
-  <h3>4.2 Dual-Rail Population Spike Encoding &amp; Trial Schedule</h3>
-  <p>
-    In <code>PopulationEncoderDecoder</code> (<code>src/flybrain_rl/encoding.py</code>), non-overlapping pools of up to <code>64</code> sensory neurons are sampled per input channel. For bit-coded <code>0&ndash;100</code> arithmetic, each 7-bit operand is represented by <code>14</code> dual-rail channels (<code>2 &times; 7</code>: explicit active channels for both <code>bit = 1</code> and <code>bit = 0</code>), ensuring constant total sensory current regardless of Hamming weight. Active channels inject Poisson-like Bernoulli spike trains with probability <code>rate_prob = 0.80</code> and amplitude <code>drive_amp = 55.0</code>. An additional <code>go_pool</code> fires during the readout window at probability <code>0.70</code> (<code>0.85 &times; drive_amp</code>).
-  </p>
-  <ul>
-    <li><strong>Delayed XOR Schedule:</strong> Operand A in <code>[0, 15] ms</code>, silent working-memory delay in <code>[15, 30] ms</code>, Operand B in <code>[30, 45] ms</code>, and Motor/Output readout in <code>[45, 60] ms</code>.</li>
-    <li><strong>Arithmetic &amp; Modular Schedule:</strong> Concurrent Operand A and B presentation in <code>[0, 30] ms</code>, followed by competing readout in <code>[30, 60] ms</code>.</li>
-  </ul>
-
-  <h3>4.3 Kenyon-Cell Expansion, Three-Factor R-STDP &amp; Dale's Law</h3>
-  <p>
-    To model the associative expansion of the <em>Drosophila</em> Mushroom Body, early-window and readout-window firing rates from sampled Mushroom Body, Central Complex, and Lateral Horn neurons—concatenated with raw Motor/Output pool counts—are projected through a fixed random sparse-like matrix <code>W<sub>kc</sub></code> (up to <code>1,024</code> Kenyon cells in the exported <code>0&ndash;100</code> model) with ReLU/threshold nonlinearity. Plastic synapses targeting Mushroom Body and Motor/Output neurons maintain decaying pre-synaptic (<code>x<sub>i</sub></code>) and post-synaptic (<code>y<sub>j</sub></code>) traces alongside a per-synapse eligibility trace <code>e<sub>ij</sub>(t)</code> (<code>&lambda;<sub>e</sub> = 0.95</code>, <code>A<sub>+</sub> = 1.0</code>, <code>A<sub>&minus;</sub> = 0.5</code>). At trial end, scalar dopamine reward <code>r &isin; {+1, &minus;1}</code> centered by an exponential moving baseline <code>r&#772; &larr; 0.95 r&#772; + 0.05 r</code> modulates synaptic weights:
-  </p>
-  <div class="eq-block">
-    <span>e<sub>ij</sub>(t+1) = &lambda;<sub>e</sub> e<sub>ij</sub>(t) + A<sub>+</sub> x<sub>i</sub>(t) s<sub>j</sub>(t) &minus; A<sub>&minus;</sub> s<sub>i</sub>(t) y<sub>j</sub>(t), &nbsp;&nbsp; &Delta;W<sub>ij</sub> = &eta; (r &minus; r&#772;) e<sub>ij</sub>(T)</span>
-    <span class="eq-num">(4)</span>
-  </div>
-  <p>
-    To strictly preserve Dale's Law after every update, cholinergic excitatory weights are clamped to <code>[0, w<sub>max</sub>]</code> and GABA/glutamatergic inhibitory weights to <code>[&minus;w<sub>max</sub>, 0]</code> with <code>w<sub>max</sub> = 5.0</code>. When the user issues negative feedback (<code>r = &minus;1</code>), <code>TrainingConfig</code> amplifies punishment via <code>neg_penalty_scale = 2.0</code>, progressive mistake scaling (<code>mistake_scale_step = 0.75</code> up to <code>4.0</code>), and a state-dependent taboo penalty (<code>taboo_penalty = 5.0</code>, decaying at <code>0.92</code>) to prevent repeating punished errors.
-  </p>
-
-  <h3>4.4 Spiking REINFORCE Baseline</h3>
-  <p>
-    As a policy-gradient comparison, <code>ReinforceAgent</code> updates readout weights <code>W<sub>out</sub></code> and biases <code>b<sub>out</sub></code> via softmax action probabilities <code>&pi;<sub>&theta;</sub>(y|x)</code> at temperature <code>0.5</code> with learning rate <code>lr_reinforce = 0.03</code> and entropy regularization <code>entropy_coef = 0.02</code>:
-  </p>
-  <div class="eq-block">
-    <span>&Delta;&theta; = &eta;<sub>RL</sub> [ (r &minus; r&#772;) &nabla;<sub>&theta;</sub> log &pi;<sub>&theta;</sub>(y|x) + 0.02 &nabla;<sub>&theta;</sub> H(&pi;<sub>&theta;</sub>(&middot;|x)) ]</span>
-    <span class="eq-num">(5)</span>
-  </div>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Parameter</th>
-        <th>Value</th>
-        <th>Config Class</th>
-        <th>Biological / Algorithmic Role</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td class="mono">dt_ms / trial_ms</td><td class="mono">1.0 ms / 60 ms</td><td class="mono">LIFConfig</td><td>Simulation step &amp; episode horizon</td></tr>
-      <tr><td class="mono">tau_mem_ms / tau_syn_ms</td><td class="mono">20.0 ms / 5.0 ms</td><td class="mono">LIFConfig</td><td>Membrane leak &amp; exponential synapse decay</td></tr>
-      <tr><td class="mono">v_rest / v_reset / v_thresh</td><td class="mono">&minus;52 / &minus;52 / &minus;45 mV</td><td class="mono">LIFConfig</td><td>Fly LIF resting, reset &amp; firing threshold</td></tr>
-      <tr><td class="mono">adapt_inc_mv / tau_adapt_ms</td><td class="mono">0.4 mV / 40.0 ms</td><td class="mono">LIFConfig</td><td>Spike-frequency adaptation stability</td></tr>
-      <tr><td class="mono">lr_rstdp / conn_lr_rstdp</td><td class="mono">0.35 / 0.002</td><td class="mono">TrainingConfig</td><td>Readout vs. internal connectome learning rates</td></tr>
-      <tr><td class="mono">lambda_e / a_plus / a_minus</td><td class="mono">0.95 / 1.0 / 0.5</td><td class="mono">TrainingConfig</td><td>Eligibility trace decay &amp; STDP asymmetry</td></tr>
-      <tr><td class="mono">w_max / neg_penalty_scale</td><td class="mono">5.0 / 2.0</td><td class="mono">TrainingConfig</td><td>Dale's Law clamp &amp; punishment amplification</td></tr>
-      <tr><td class="mono">taboo_penalty / taboo_decay</td><td class="mono">5.0 / 0.92</td><td class="mono">TrainingConfig</td><td>State-dependent error avoidance memory</td></tr>
-    </tbody>
-  </table>
-
-  <h3>4.5 Feature Vector Construction &amp; 9-Bit Arithmetic Decoding</h3>
-  <p>
-    For each 60 ms trial, the readout layer constructs a normalized feature vector <code>x &isin; R<sup>D</sup></code> combining early-window rates (<code>t &lt; readout_start</code>), readout-window rates (<code>t &ge; readout_start</code>) across sampled Mushroom Body (<code>mb_idx</code>) and Central Complex (<code>cx_idx</code>) populations, and raw Motor/Output pool spike counts:
-  </p>
-  <div class="eq-block">
-    <span>h<sub>raw</sub> = [ r<sub>early</sub>(MB, CX), &nbsp; r<sub>readout</sub>(MB, CX), &nbsp; c<sub>motor</sub> ], &nbsp;&nbsp; h<sub>KC</sub> = max(0, W<sub>KC</sub> h<sub>raw</sub>)</span>
-    <span class="eq-num">(6)</span>
-  </div>
-  <p>
-    In the <code>0&ndash;100</code> serverless model, <code>W<sub>KC</sub></code> projects <code>h<sub>raw</sub></code> into <code>1,024</code> Kenyon-cell features. While <code>delayed_xor</code> (<code>K=2</code>) and <code>mod_add</code> (<code>K=7</code>) select the winning class via <code>argmax</code> over competing output logits, <code>add_3bit</code> and <code>sub_3bit</code> decode <strong>9 competing binary output bits</strong> (sign bit + 8 magnitude bits, covering <code>[&minus;100, 200]</code>) where each bit <code>k &isin; {0..8}</code> is predicted independently from its signed logit <code>z<sub>k</sub> &ge; 0</code> and reassembled into a signed integer prediction. Top-4 candidate answers displayed in the UI are ranked by bit-Hamming log-likelihood against the 9 predicted bit probabilities.
-  </p>
-
-  <!-- 5. EXPERIMENTAL DESIGN & SCIENTIFIC CONTROLS -->
-  <h2><span class="sec-num">5.</span>Experimental Design &amp; Scientific Controls</h2>
-  <p>
-    To separate genuine connectome computation from coincidental fitting or parameter-count effects, our experimental suite (<code>scripts/run_experiments.py</code> and <code>scripts/export_serverless_artifacts.py</code>) evaluates four tasks across two structural/algorithmic controls and three lesion protocols:
-  </p>
-  <ul>
-    <li><strong>Degree-Preserving Shuffled Brain (<code>shuffle_graph</code>):</strong> Configuration-model rewiring permutes presynaptic column indices across the CSR matrix while preserving every neuron's exact in-degree, out-degree, and E/I neurotransmitter sign ratio.</li>
-    <li><strong>Matched-Budget PyTorch GRU:</strong> A non-spiking recurrent neural network baseline trained with REINFORCE on identical 60 ms temporal input tensors and identical episode counts.</li>
-    <li><strong>Targeted Lesion Protocols:</strong> (1) <em>Central Complex Silencing</em> (2,875 neurons clamped to <code>V<sub>rest</sub></code>), (2) <em>Mushroom Body Silencing</em> (5,608 neurons), and (3) <em>Top-5% Hub Silencing</em> (silencing the highest out-degree neurons ranked by <code>torch.bincount(col_indices)</code>).</li>
-  </ul>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Task Identifier</th>
-        <th>Input Domain</th>
-        <th>Encoding &amp; Output Space</th>
-        <th>Train / Unseen Split</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="mono c-indigo">delayed_xor</td>
-        <td class="mono">A, B &isin; {0, 1}</td>
-        <td>Dual-rail bits across 15 ms silent delay; 2 classes</td>
-        <td class="mono">3 train / 1 unseen</td>
-      </tr>
-      <tr>
-        <td class="mono c-cyan">mod_add</td>
-        <td class="mono">A, B &isin; {0..6}</td>
-        <td>One-hot channels mod 7; 7 competing classes</td>
-        <td class="mono">37 train / 12 unseen</td>
-      </tr>
-      <tr>
-        <td class="mono c-green">add_3bit</td>
-        <td class="mono">A, B &isin; [0, 100]</td>
-        <td>14 dual-rail bit channels/operand; 9 competing output bits</td>
-        <td class="mono">800 train / 200 unseen</td>
-      </tr>
-      <tr>
-        <td class="mono c-amber">sub_3bit</td>
-        <td class="mono">A, B &isin; [0, 100]</td>
-        <td>14 dual-rail bit channels/operand; 9 competing output bits</td>
-        <td class="mono">800 train / 200 unseen</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <!-- 6. EMPIRICAL RESULTS & ABLATION ANALYSIS -->
-  <h2><span class="sec-num">6.</span>Empirical Results, Hardware Throughput &amp; Ablation Analysis</h2>
-
-  <h3>6.1 Hardware Throughput: Local CPU vs. Local GPU</h3>
-  <p>
-    Benchmarking the complete 138,639-neuron, 15,091,983-edge CSR graph over 60 ms trials (<code>scripts/benchmark_hardware.py</code>, recorded in <code>artifacts/hardware_benchmark.json</code>) reveals a striking architectural characteristic of sparse spiking simulation. At batch size 1, sparse CSR matrix-vector multiplication (<code>torch.mv</code>) on <code>local_gpu</code> achieves a <strong>12.1&times; speedup</strong> over <code>local_cpu</code> (<strong>129.40 ms</strong> vs. <strong>1572.10 ms</strong>) while consuming only <strong>330.08 MB</strong> of GPU memory and delivering <strong>165,568.4 spikes/s</strong>. Conversely, at larger batch sizes (<code>16</code> and <code>64</code>), <code>torch.sparse.mm</code> experiences sparse memory-bandwidth contention on GPU (<code>11886.21 ms</code> and <code>59356.44 ms</code>), making batch size 1 the optimal regime for interactive single-trial GPU execution.
-  </p>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Execution Target</th>
-        <th>Batch Size</th>
-        <th>60 ms Trial Latency</th>
-        <th>Throughput (Spikes/s)</th>
-        <th>Peak GPU Memory</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td class="mono">local_cpu</td><td class="mono">1</td><td class="mono">1572.10 ms</td><td class="mono">13,630.1</td><td class="mono">0.00 MB</td></tr>
-      <tr><td class="mono">local_cpu</td><td class="mono">16</td><td class="mono">5417.78 ms</td><td class="mono">63,282.0</td><td class="mono">0.00 MB</td></tr>
-      <tr><td class="mono">local_cpu</td><td class="mono">64</td><td class="mono">19596.30 ms</td><td class="mono">69,982.2</td><td class="mono">0.00 MB</td></tr>
-      <tr class="highlight">
-        <td class="mono c-cyan">local_gpu (Optimal)</td>
-        <td class="mono">1</td>
-        <td class="mono c-green">129.40 ms (12.1&times;)</td>
-        <td class="mono c-indigo">165,568.4</td>
-        <td class="mono">330.08 MB</td>
-      </tr>
-      <tr><td class="mono">local_gpu</td><td class="mono">16</td><td class="mono">11886.21 ms</td><td class="mono">28,838.8</td><td class="mono">904.25 MB</td></tr>
-      <tr><td class="mono">local_gpu</td><td class="mono">64</td><td class="mono">59356.44 ms</td><td class="mono">23,100.0</td><td class="mono">2745.96 MB</td></tr>
-    </tbody>
-  </table>
-
-  <div class="figure-card">
-    <svg viewBox="0 0 760 135" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;background:#0D121D;border-radius:6px;">
-      <text x="16" y="22" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="9">Batch Size = 1 Throughput Comparison (Spikes/s, 138,639 Neurons)</text>
-      <!-- local_cpu bar -->
-      <text x="16" y="54" fill="#CBD5E1" font-family="JetBrains Mono, monospace" font-size="9">local_cpu (1572.10 ms)</text>
-      <rect x="210" y="42" width="44" height="16" rx="3" fill="#64748B"/>
-      <text x="262" y="54" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="9">13,630.1 spk/s</text>
-      <!-- local_gpu bar -->
-      <text x="16" y="88" fill="#38BDF8" font-family="JetBrains Mono, monospace" font-size="9">local_gpu (129.40 ms)</text>
-      <rect x="210" y="76" width="530" height="16" rx="3" fill="#818CF8"/>
-      <text x="218" y="88" fill="#F8FAFC" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700">165,568.4 spk/s (12.1x speedup, 330.08 MB VRAM)</text>
-      <text x="16" y="118" fill="#64748B" font-family="Inter, sans-serif" font-size="8.2">Note: GPU batch=1 uses CSR torch.mv; larger batches (16, 64) degrade due to sparse.mm gather contention.</text>
-    </svg>
-    <div class="caption">
-      <strong>Figure 3:</strong> Single-episode CSR matrix-vector execution on <code>local_gpu</code> delivers 12.1&times; higher spike throughput than <code>local_cpu</code> on the full 15.09M-edge connectome.
+  <div class="table-wrap">
+    <div class="table-caption">
+      <strong>Table 3:</strong> Core software modules in <code>src/flybrain_rl/</code>, <code>scripts/</code>, and <code>api/</code>.
     </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Module Path</th>
+          <th>Primary Responsibility</th>
+          <th>Key Interfaces</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">src/flybrain_rl/config.py</td><td>Region constants, dorsal centers, LIF &amp; RL configs</td><td class="mono">LIFConfig, TrainingConfig</td></tr>
+        <tr><td class="mono">src/flybrain_rl/connectome.py</td><td>DuckDB/Parquet loader, CSR compiler, rewiring</td><td class="mono">ConnectomeGraph, map_region</td></tr>
+        <tr><td class="mono">src/flybrain_rl/brain.py</td><td>Batched GPU/CPU sparse CSR LIF &amp; lesion masks</td><td class="mono">SpikingFlyBrain, set_lesion</td></tr>
+        <tr><td class="mono">src/flybrain_rl/encoding.py</td><td>Dual-rail sensory spike pools &amp; competing readouts</td><td class="mono">PopulationEncoderDecoder</td></tr>
+        <tr><td class="mono">src/flybrain_rl/train.py</td><td>Kenyon-cell projection, 3-factor R-STDP, REINFORCE</td><td class="mono">RSTDPAgent, ReinforceAgent</td></tr>
+        <tr><td class="mono">scripts/export_serverless_artifacts.py</td><td>3,000-landmark extraction &amp; 0&ndash;100 unseen benchmark</td><td class="mono">_run_subnetwork_trial</td></tr>
+        <tr><td class="mono">api/index.py</td><td>Stateless/in-memory FastAPI + NumPy CSR backend</td><td class="mono">ServerlessBrainEngine</td></tr>
+      </tbody>
+    </table>
   </div>
 
-  <h3>6.2 Working-Memory Control Baselines &amp; Lesion Recovery (Delayed XOR)</h3>
+  <!-- 4. BIOPHYSICAL MODEL AND PLASTICITY RULES -->
+  <h2>4. Biophysical Model and Plasticity Rules</h2>
+
+  <h3>4.1 Batched Leaky Integrate-and-Fire Dynamics with Adaptation</h3>
   <p>
-    In the 10-episode local smoke experiment on <code>delayed_xor</code> (<code>artifacts/experiments/summary.json</code>), the real FlyWire connectome trained with three-factor R-STDP achieved <strong>70.0%</strong> held-out accuracy (955.6 mean spikes/trial), outperforming both spiking REINFORCE (<strong>60.0%</strong>, 1030.5 spikes) and the matched-budget PyTorch GRU (<strong>40.0%</strong>, 0.0 spikes). Interestingly, the degree-preserving shuffled connectome also reached <strong>70.0%</strong> (958.6 spikes) on this 2-class task, indicating that degree statistics alone support basic delay-line separation when readout plasticity is active.
+    In <code>SpikingFlyBrain</code> (<code>src/flybrain_rl/brain.py</code>), neural activity is integrated at discrete time step <span class="math-it">&Delta;t</span> = 1.0 ms over a <span class="math-it">T</span> = 60 ms trial horizon for batch size <span class="math-it">B</span>. Compiled connectome weights are scaled by <code>weight_scale = 2.0</code>. At each step <span class="math-it">t</span>, synaptic currents <span class="math-it">I</span><sub>syn</sub>(<span class="math-it">t</span>) decay exponentially with time constant <span class="math-it">&tau;</span><sub>syn</sub> = 5.0 ms (<span class="math-it">&beta;</span> = exp(&minus;<span class="math-it">&Delta;t</span>/<span class="math-it">&tau;</span><sub>syn</sub>)) while receiving presynaptic spikes through the transposed CSR matrix <span class="math-it">W</span><sup>T</sup> and external sensory currents <span class="math-it">I</span><sub>ext</sub>(<span class="math-it">t</span>):
   </p>
+  <div class="eq-row">
+    <div class="eq-body">
+      <span class="math-it">I</span><sub>syn</sub>(<span class="math-it">t</span>) = <span class="math-it">&beta; I</span><sub>syn</sub>(<span class="math-it">t</span> &minus; 1) + <span class="math-it">W</span><sup>T</sup> <span class="math-it">s</span>(<span class="math-it">t</span> &minus; 1) + <span class="math-it">I</span><sub>ext</sub>(<span class="math-it">t</span>)
+    </div>
+    <div class="eq-num">(1)</div>
+  </div>
   <p>
-    Targeted lesioning exposed strong functional localization: silencing the <strong>Central Complex</strong> immediately collapsed held-out accuracy to <strong>0.0%</strong> (951.0 spikes/trial) by severing midline working-memory routing. Remarkably, continuing R-STDP training post-lesion drove plastic compensation through alternative Lateral Horn and Mushroom Body pathways, recovering accuracy to <strong>100.0%</strong> (938.0 spikes/trial). By contrast, silencing the <strong>top 5% highest-degree hub neurons</strong> completely extinguished recurrent cascades (<strong>0.0</strong> mean spikes).
+    Membrane potentials <span class="math-it">V</span>(<span class="math-it">t</span>) integrate toward resting potential <span class="math-it">V</span><sub>rest</sub> = &minus;52.0 mV with membrane time constant <span class="math-it">&tau;</span><sub>m</sub> = 20.0 ms (<span class="math-it">&alpha;</span> = exp(&minus;<span class="math-it">&Delta;t</span>/<span class="math-it">&tau;</span><sub>m</sub>)) and resistance <span class="math-it">R</span><sub>m</sub> = 1.0. To prevent runaway synchronous bursting in high-degree interneurons, each neuron maintains an adaptive threshold offset <span class="math-it">&theta;</span><sub>adapt</sub>(<span class="math-it">t</span>) decaying with <span class="math-it">&tau;</span><sub>adapt</sub> = 40.0 ms (<span class="math-it">&gamma;</span><sub>adapt</sub> = exp(&minus;<span class="math-it">&Delta;t</span>/<span class="math-it">&tau;</span><sub>adapt</sub>)) and incrementing by 0.4 mV upon each spike:
+  </p>
+  <div class="eq-row">
+    <div class="eq-body">
+      <span class="math-it">V</span>(<span class="math-it">t</span>) = <span class="math-it">&alpha; V</span>(<span class="math-it">t</span> &minus; 1) + (1 &minus; <span class="math-it">&alpha;</span>)(<span class="math-it">V</span><sub>rest</sub> + <span class="math-it">R</span><sub>m</sub> <span class="math-it">I</span><sub>syn</sub>(<span class="math-it">t</span>))
+    </div>
+    <div class="eq-num">(2)</div>
+  </div>
+  <div class="eq-row">
+    <div class="eq-body">
+      <span class="math-it">s</span>(<span class="math-it">t</span>) = 1[<span class="math-it">V</span>(<span class="math-it">t</span>) &ge; <span class="math-it">V</span><sub>thresh</sub> + <span class="math-it">&theta;</span><sub>adapt</sub>(<span class="math-it">t</span>) &and; refrac(<span class="math-it">t</span>) = 0], &nbsp;&nbsp; <span class="math-it">&theta;</span><sub>adapt</sub>(<span class="math-it">t</span> + 1) = <span class="math-it">&gamma;</span><sub>adapt</sub> <span class="math-it">&theta;</span><sub>adapt</sub>(<span class="math-it">t</span>) + 0.4 <span class="math-it">s</span>(<span class="math-it">t</span>)
+    </div>
+    <div class="eq-num">(3)</div>
+  </div>
+  <p>
+    Neurons that cross threshold (<span class="math-it">V</span><sub>thresh</sub> = &minus;45.0 mV) reset immediately to <span class="math-it">V</span><sub>reset</sub> = &minus;52.0 mV and enter a 2 ms refractory period. A binary vector <code>active_mask</code> clamps lesioned neurons at <span class="math-it">V</span><sub>rest</sub> and zeroes their spike output without altering the underlying CSR indices.
   </p>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Condition / Control / Lesion</th>
-        <th>Plasticity Rule</th>
-        <th>Held-Out Acc</th>
-        <th>Mean Spikes / Trial</th>
-        <th>Scientific Interpretation</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr class="highlight">
-        <td class="c-indigo">Real FlyWire Connectome</td>
-        <td class="mono">R-STDP</td>
-        <td class="mono c-green">70.0%</td>
-        <td class="mono">955.6</td>
-        <td>Outperforms RL &amp; GRU baselines</td>
-      </tr>
-      <tr>
-        <td>Real FlyWire Connectome</td>
-        <td class="mono">REINFORCE</td>
-        <td class="mono">60.0%</td>
-        <td class="mono">1030.5</td>
-        <td>Higher variance policy gradient</td>
-      </tr>
-      <tr>
-        <td>Degree-Preserving Shuffled Brain</td>
-        <td class="mono">R-STDP</td>
-        <td class="mono">70.0%</td>
-        <td class="mono">958.6</td>
-        <td>Degree distribution supports 2-class XOR</td>
-      </tr>
-      <tr>
-        <td>Matched-Budget PyTorch GRU</td>
-        <td class="mono">REINFORCE</td>
-        <td class="mono c-red">40.0%</td>
-        <td class="mono">0.0</td>
-        <td>Non-spiking baseline underfits 10-ep budget</td>
-      </tr>
-      <tr>
-        <td class="c-amber">Central Complex Lesion (Immediate)</td>
-        <td class="mono">Frozen</td>
-        <td class="mono c-red">0.0%</td>
-        <td class="mono">951.0</td>
-        <td>Working-memory routing collapses</td>
-      </tr>
-      <tr>
-        <td class="c-green">Central Complex Lesion (Recovered)</td>
-        <td class="mono">R-STDP</td>
-        <td class="mono c-green">100.0%</td>
-        <td class="mono">938.0</td>
-        <td>Plastic rerouting restores XOR accuracy</td>
-      </tr>
-      <tr>
-        <td class="c-red">Top-5% Out-Degree Hub Lesion</td>
-        <td class="mono">Frozen</td>
-        <td class="mono">N/A</td>
-        <td class="mono c-red">0.0</td>
-        <td>Global recurrent cascade extinguished</td>
-      </tr>
-    </tbody>
-  </table>
+  <h3>4.2 Dual-Rail Population Spike Encoding and Trial Timing</h3>
+  <p>
+    In <code>PopulationEncoderDecoder</code> (<code>src/flybrain_rl/encoding.py</code>), non-overlapping sensory pools of up to 64 neurons are assigned per input channel. For bit-coded 0&ndash;100 arithmetic, each 7-bit operand is represented by 14 dual-rail channels (explicit pools for both <code>bit = 1</code> and <code>bit = 0</code>), maintaining constant total sensory drive independent of operand Hamming weight. Active channels inject Bernoulli spike currents with probability <code>rate_prob = 0.80</code> and amplitude <code>drive_amp = 55.0</code>. A dedicated <code>go_pool</code> fires during the readout window at probability 0.70 (amplitude <code>0.85 &times; drive_amp</code>).
+  </p>
+  <ul>
+    <li><strong>Working-Memory Schedule (<code>delayed_xor</code>):</strong> Operand A is presented during [0, 15] ms, followed by a silent working-memory delay in [15, 30] ms, Operand B in [30, 45] ms, and Motor/Output readout in [45, 60] ms.</li>
+    <li><strong>Arithmetic Schedule (<code>add_3bit</code>, <code>sub_3bit</code>, <code>mod_add</code>):</strong> Operands A and B are presented concurrently during [0, 30] ms, followed by readout integration during [30, 60] ms.</li>
+  </ul>
+
+  <h3>4.3 Kenyon-Cell Expansion, Three-Factor R-STDP, and Dale's Law</h3>
+  <p>
+    Mirroring the sparse associative expansion of the <em>Drosophila</em> Mushroom Body, early-window and readout-window firing rates from sampled Mushroom Body (<code>mb_idx</code>) and Central Complex (<code>cx_idx</code>) neurons—concatenated with raw Motor/Output pool counts—are projected through a fixed random matrix <span class="math-it">W</span><sub>KC</sub> into 1,024 rectified Kenyon-cell features in the 0&ndash;100 model:
+  </p>
+  <div class="eq-row">
+    <div class="eq-body">
+      <span class="math-it">h</span><sub>raw</sub> = [ <span class="math-it">r</span><sub>early</sub>(MB, CX), &nbsp; <span class="math-it">r</span><sub>readout</sub>(MB, CX), &nbsp; <span class="math-it">c</span><sub>motor</sub> ], &nbsp;&nbsp; <span class="math-it">h</span><sub>KC</sub> = max(0, <span class="math-it">W</span><sub>KC</sub> <span class="math-it">h</span><sub>raw</sub>)
+    </div>
+    <div class="eq-num">(4)</div>
+  </div>
+  <p>
+    Plastic synapses targeting Mushroom Body and Motor/Output populations maintain decaying pre-synaptic (<span class="math-it">x<sub>i</sub></span>) and post-synaptic (<span class="math-it">y<sub>j</sub></span>) traces alongside per-synapse eligibility traces <span class="math-it">e<sub>ij</sub></span>(<span class="math-it">t</span>) with decay <span class="math-it">&lambda;</span><sub>e</sub> = 0.95, potentiation <span class="math-it">A</span><sub>+</sub> = 1.0, and depression <span class="math-it">A</span><sub>&minus;</sub> = 0.5. At trial completion, scalar dopamine reward <span class="math-it">r</span> &isin; {+1, &minus;1} centered by an exponential moving baseline <span class="math-it">r&#772;</span> &larr; 0.95 <span class="math-it">r&#772;</span> + 0.05 <span class="math-it">r</span> gates synaptic updates:
+  </p>
+  <div class="eq-row">
+    <div class="eq-body">
+      <span class="math-it">e<sub>ij</sub></span>(<span class="math-it">t</span> + 1) = <span class="math-it">&lambda;</span><sub>e</sub> <span class="math-it">e<sub>ij</sub></span>(<span class="math-it">t</span>) + <span class="math-it">A</span><sub>+</sub> <span class="math-it">x<sub>i</sub></span>(<span class="math-it">t</span>) <span class="math-it">s<sub>j</sub></span>(<span class="math-it">t</span>) &minus; <span class="math-it">A</span><sub>&minus;</sub> <span class="math-it">s<sub>i</sub></span>(<span class="math-it">t</span>) <span class="math-it">y<sub>j</sub></span>(<span class="math-it">t</span>), &nbsp;&nbsp; &Delta;<span class="math-it">W<sub>ij</sub></span> = <span class="math-it">&eta;</span> (<span class="math-it">r</span> &minus; <span class="math-it">r&#772;</span>) <span class="math-it">e<sub>ij</sub></span>(<span class="math-it">T</span>)
+    </div>
+    <div class="eq-num">(5)</div>
+  </div>
+  <p>
+    After every synaptic update, Dale's Law is enforced strictly: excitatory cholinergic weights are clamped to [0, <span class="math-it">w</span><sub>max</sub>] and inhibitory GABA/glutamatergic weights to [&minus;<span class="math-it">w</span><sub>max</sub>, 0], with <span class="math-it">w</span><sub>max</sub> = 5.0. During interactive user punishment (<span class="math-it">r</span> = &minus;1), <code>TrainingConfig</code> amplifies negative updates via <code>neg_penalty_scale = 2.0</code>, progressive mistake scaling (<code>mistake_scale_step = 0.75</code> up to 4.0), and a decaying state-dependent taboo penalty (<code>taboo_penalty = 5.0</code>, <code>taboo_decay = 0.92</code>) so the network visibly shifts away from punished errors.
+  </p>
+
+  <h3>4.4 Spiking REINFORCE Baseline and 9-Bit Output Decoding</h3>
+  <p>
+    As a policy-gradient comparison, <code>ReinforceAgent</code> updates readout parameters <span class="math-it">&theta;</span> = (<span class="math-it">W</span><sub>out</sub>, <span class="math-it">b</span><sub>out</sub>) via softmax probabilities <span class="math-it">&pi;<sub>&theta;</sub></span>(<span class="math-it">y</span>|<span class="math-it">x</span>) at temperature 0.5 with learning rate <code>lr_reinforce = 0.03</code> and entropy coefficient 0.02:
+  </p>
+  <div class="eq-row">
+    <div class="eq-body">
+      &Delta;<span class="math-it">&theta;</span> = <span class="math-it">&eta;</span><sub>RL</sub> [ (<span class="math-it">r</span> &minus; <span class="math-it">r&#772;</span>) &nabla;<sub><span class="math-it">&theta;</span></sub> log <span class="math-it">&pi;<sub>&theta;</sub></span>(<span class="math-it">y</span>|<span class="math-it">x</span>) + 0.02 &nabla;<sub><span class="math-it">&theta;</span></sub> <span class="math-it">H</span>(<span class="math-it">&pi;<sub>&theta;</sub></span>(&middot;|<span class="math-it">x</span>)) ]
+    </div>
+    <div class="eq-num">(6)</div>
+  </div>
+  <p>
+    For <code>delayed_xor</code> (<span class="math-it">K</span> = 2) and <code>mod_add</code> (<span class="math-it">K</span> = 7), the predicted integer is the <code>argmax</code> over competing class logits. For 0&ndash;100 <code>add_3bit</code> and <code>sub_3bit</code>, the readout decodes <strong>9 competing binary output bits</strong> (1 sign bit plus 8 magnitude bits covering [&minus;100, 200]), where each bit is decided from its signed logit and reassembled into a signed integer. Top-4 candidate answers reported in the UI are ranked by bit-Hamming log-likelihood. Table 4 summarizes all biophysical and plasticity hyperparameters.
+  </p>
+
+  <div class="table-wrap">
+    <div class="table-caption">
+      <strong>Table 4:</strong> Complete biophysical (<code>LIFConfig</code>) and plasticity (<code>TrainingConfig</code>) hyperparameters in <code>src/flybrain_rl/config.py</code>.
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Parameter</th>
+          <th>Value</th>
+          <th>Dataclass</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">dt_ms / trial_ms</td><td class="mono">1.0 ms / 60 ms</td><td class="mono">LIFConfig</td><td>Integration step and trial window</td></tr>
+        <tr><td class="mono">tau_mem_ms / tau_syn_ms</td><td class="mono">20.0 ms / 5.0 ms</td><td class="mono">LIFConfig</td><td>Membrane leak and synaptic decay</td></tr>
+        <tr><td class="mono">v_rest / v_reset / v_thresh</td><td class="mono">&minus;52 / &minus;52 / &minus;45 mV</td><td class="mono">LIFConfig</td><td>Resting, reset, and threshold voltages</td></tr>
+        <tr><td class="mono">refrac_steps / weight_scale</td><td class="mono">2 ms / 2.0</td><td class="mono">LIFConfig</td><td>Refractory period and CSR gain</td></tr>
+        <tr><td class="mono">adapt_inc_mv / tau_adapt_ms</td><td class="mono">0.4 mV / 40.0 ms</td><td class="mono">LIFConfig</td><td>Spike-frequency adaptation</td></tr>
+        <tr><td class="mono">lr_rstdp / conn_lr_rstdp</td><td class="mono">0.35 / 0.002</td><td class="mono">TrainingConfig</td><td>Readout vs. internal connectome rates</td></tr>
+        <tr><td class="mono">lambda_e / a_plus / a_minus</td><td class="mono">0.95 / 1.0 / 0.5</td><td class="mono">TrainingConfig</td><td>Eligibility decay and STDP asymmetry</td></tr>
+        <tr><td class="mono">w_max / lr_reinforce</td><td class="mono">5.0 / 0.03</td><td class="mono">TrainingConfig</td><td>Dale's Law clamp and RL step size</td></tr>
+        <tr><td class="mono">neg_penalty_scale / taboo_penalty</td><td class="mono">2.0 / 5.0 (decay 0.92)</td><td class="mono">TrainingConfig</td><td>Error avoidance under punishment</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 5. EXPERIMENTAL DESIGN AND CONTROLS -->
+  <h2>5. Experimental Design and Scientific Controls</h2>
+  <p>
+    To isolate the contribution of biological wiring topology from generic recurrent dynamics or parameter count, <code>scripts/run_experiments.py</code> and <code>scripts/export_serverless_artifacts.py</code> evaluate four tasks against two structural/algorithmic controls and three lesion protocols:
+  </p>
+  <ul>
+    <li><strong>Degree-Preserving Shuffled Connectome:</strong> Configuration-model rewiring permutes presynaptic column indices across the CSR matrix while preserving every neuron's exact in-degree, out-degree, and E/I neurotransmitter sign ratio.</li>
+    <li><strong>Matched-Budget PyTorch GRU:</strong> A non-spiking recurrent baseline trained with REINFORCE on identical 60 ms input sequences and episode budgets.</li>
+    <li><strong>Targeted Lesion Protocols:</strong> Silencing the Central Complex (2,875 neurons), silencing the Mushroom Body (5,608 neurons), and silencing the top 5% highest out-degree hub neurons ranked by <code>torch.bincount(col_indices)</code>.</li>
+  </ul>
+
+  <div class="table-wrap">
+    <div class="table-caption">
+      <strong>Table 5:</strong> Task suite and deterministic train/unseen splits used across local GPU experiments and serverless artifact evaluation.
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Task Identifier</th>
+          <th>Input Domain</th>
+          <th>Encoding &amp; Output Space</th>
+          <th>Train / Unseen Split</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">delayed_xor</td><td class="mono">A, B &isin; {0, 1}</td><td>Dual-rail bits with 15 ms silent delay; 2 classes</td><td class="mono">3 train / 1 unseen</td></tr>
+        <tr><td class="mono">mod_add</td><td class="mono">A, B &isin; {0..6}</td><td>One-hot channels mod 7; 7 classes</td><td class="mono">37 train / 12 unseen</td></tr>
+        <tr><td class="mono">add_3bit</td><td class="mono">A, B &isin; [0, 100]</td><td>14 dual-rail channels/operand; 9 output bits</td><td class="mono">800 train / 200 unseen</td></tr>
+        <tr><td class="mono">sub_3bit</td><td class="mono">A, B &isin; [0, 100]</td><td>14 dual-rail channels/operand; 9 output bits</td><td class="mono">800 train / 200 unseen</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 6. EMPIRICAL RESULTS AND ABLATION ANALYSIS -->
+  <h2>6. Empirical Results and Ablation Analysis</h2>
+
+  <h3>6.1 Hardware Throughput: Local CPU versus Local GPU</h3>
+  <p>
+    Benchmarking the complete 138,639-neuron, 15,091,983-edge CSR graph across 60 ms trials (<code>scripts/benchmark_hardware.py</code>, recorded in <code>artifacts/hardware_benchmark.json</code>) reveals an asymmetric scaling profile typical of irregular sparse graphs. At batch size 1, sparse CSR matrix-vector multiplication (<code>torch.mv</code>) on <code>local_gpu</code> completes a 60 ms trial in <strong>129.40 ms</strong> versus <strong>1572.10 ms</strong> on <code>local_cpu</code>—a <strong>12.1&times; speedup</strong> achieving <strong>165,568.4 spikes/s</strong> within <strong>330.08 MB</strong> of GPU memory. At batch sizes 16 and 64, however, <code>torch.sparse.mm</code> suffers from irregular gather contention on GPU (11,886.21 ms and 59,356.44 ms), making batch size 1 the optimal regime for interactive single-episode GPU simulation.
+  </p>
+
+  <div class="table-wrap">
+    <div class="table-caption">
+      <strong>Table 6:</strong> Full-connectome (138,639 neurons, 15.09M edges) 60 ms trial latency, throughput, and peak GPU memory across execution targets and batch sizes.
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Execution Target</th>
+          <th class="num">Batch Size</th>
+          <th class="num">60 ms Trial Latency</th>
+          <th class="num">Throughput (Spikes/s)</th>
+          <th class="num">Peak GPU Mem</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">local_cpu</td><td class="num">1</td><td class="num">1572.10 ms</td><td class="num">13,630.1</td><td class="num">0.00 MB</td></tr>
+        <tr><td class="mono">local_cpu</td><td class="num">16</td><td class="num">5417.78 ms</td><td class="num">63,282.0</td><td class="num">0.00 MB</td></tr>
+        <tr><td class="mono">local_cpu</td><td class="num">64</td><td class="num">19596.30 ms</td><td class="num">69,982.2</td><td class="num">0.00 MB</td></tr>
+        <tr class="row-emphasis"><td class="mono">local_gpu (Optimal)</td><td class="num">1</td><td class="num">129.40 ms (12.1&times;)</td><td class="num">165,568.4</td><td class="num">330.08 MB</td></tr>
+        <tr><td class="mono">local_gpu</td><td class="num">16</td><td class="num">11886.21 ms</td><td class="num">28,838.8</td><td class="num">904.25 MB</td></tr>
+        <tr><td class="mono">local_gpu</td><td class="num">64</td><td class="num">59356.44 ms</td><td class="num">23,100.0</td><td class="num">2745.96 MB</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>6.2 Working-Memory Controls and Lesion Recovery (Delayed XOR)</h3>
+  <p>
+    In the 10-episode local smoke experiment on <code>delayed_xor</code> (<code>artifacts/experiments/summary.json</code>), the real FlyWire connectome trained with R-STDP reached <strong>70.0%</strong> held-out accuracy (955.6 mean spikes/trial), outperforming both spiking REINFORCE (<strong>60.0%</strong>, 1030.5 spikes) and the matched PyTorch GRU (<strong>40.0%</strong>, 0.0 spikes). The degree-preserving shuffled connectome also reached <strong>70.0%</strong> (958.6 spikes) on this binary task, indicating that degree distribution alone supports 2-class delay separation when readout plasticity is active.
+  </p>
+  <p>
+    Targeted ablation confirmed functional specialization: silencing the Central Complex immediately collapsed held-out accuracy to <strong>0.0%</strong> (951.0 spikes/trial) by disrupting midline working-memory propagation. Continuing R-STDP training post-lesion drove compensatory reweighting across alternative Lateral Horn and Mushroom Body pathways, recovering held-out accuracy to <strong>100.0%</strong> (938.0 spikes/trial). In contrast, silencing the top 5% highest-degree hub neurons extinguished global recurrent activity completely (<strong>0.0</strong> mean spikes).
+  </p>
+
+  <div class="table-wrap">
+    <div class="table-caption">
+      <strong>Table 7:</strong> Control baseline and lesion ablation results on <code>delayed_xor</code> (10-episode local smoke evaluation, <code>artifacts/experiments/summary.json</code>).
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Condition / Control / Lesion</th>
+          <th>Rule</th>
+          <th class="num">Held-Out Acc</th>
+          <th class="num">Mean Spikes</th>
+          <th>Empirical Observation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row-emphasis"><td>Real FlyWire Connectome</td><td class="mono">R-STDP</td><td class="num">70.0%</td><td class="num">955.6</td><td>Outperforms REINFORCE and GRU</td></tr>
+        <tr><td>Real FlyWire Connectome</td><td class="mono">REINFORCE</td><td class="num">60.0%</td><td class="num">1030.5</td><td>Higher policy-gradient variance</td></tr>
+        <tr><td>Shuffled Connectome</td><td class="mono">R-STDP</td><td class="num">70.0%</td><td class="num">958.6</td><td>Degree stats suffice for binary XOR</td></tr>
+        <tr><td>Matched-Budget PyTorch GRU</td><td class="mono">REINFORCE</td><td class="num">40.0%</td><td class="num">0.0</td><td>Underfits 10-episode budget</td></tr>
+        <tr><td>Central Complex Lesion (Immediate)</td><td class="mono">Frozen</td><td class="num">0.0%</td><td class="num">951.0</td><td>Working-memory routing collapses</td></tr>
+        <tr class="row-emphasis"><td>Central Complex Lesion (Recovered)</td><td class="mono">R-STDP</td><td class="num">100.0%</td><td class="num">938.0</td><td>Plastic rerouting restores accuracy</td></tr>
+        <tr><td>Top-5% Out-Degree Hub Lesion</td><td class="mono">Frozen</td><td class="num">N/A</td><td class="num">0.0</td><td>Recurrent cascades extinguished</td></tr>
+      </tbody>
+    </table>
+  </div>
 
   <h3>6.3 Generalization Stress Test on 0&ndash;100 Arithmetic</h3>
   <p>
-    Expanding operands to <code>0&ndash;100</code> (10,201 possible <code>(A, B)</code> pairs) with 1,024 Mushroom Body Kenyon-cell projections trained on 800 sampled pairs and evaluated on 200 completely unseen pairs exposes a fundamental distinction between reservoir memorization and algorithmic generalization:
+    Expanding operand ranges to 0&ndash;100 (10,201 possible ordered pairs) with 1,024 Kenyon-cell projections trained strictly on 800 sampled pairs and evaluated on 200 unseen pairs exposes the boundary between biological reservoir learning and exact digital arithmetic (Table 8 and Figure 3).
   </p>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Task (Train / Unseen Split)</th>
-        <th>Train Exact Acc</th>
-        <th>Unseen Exact Int Acc</th>
-        <th>Unseen Per-Bit Acc</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><code>sub_3bit</code> (0&ndash;100, 800 / 200)</td>
-        <td class="mono">8.5%</td>
-        <td class="mono c-indigo">2.5%</td>
-        <td class="mono c-green">67.3%</td>
-      </tr>
-      <tr>
-        <td><code>add_3bit</code> (0&ndash;100, 800 / 200)</td>
-        <td class="mono">6.2%</td>
-        <td class="mono c-indigo">1.0%</td>
-        <td class="mono c-amber">62.8%</td>
-      </tr>
-      <tr>
-        <td><code>mod_add</code> (mod 7, 37 / 12)</td>
-        <td class="mono c-green">100.0%</td>
-        <td class="mono">0.0%</td>
-        <td class="mono">&mdash;</td>
-      </tr>
-      <tr>
-        <td><code>delayed_xor</code> (3 / 1)</td>
-        <td class="mono c-green">100.0%</td>
-        <td class="mono">0.0%</td>
-        <td class="mono">&mdash;</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="callout">
-    <strong>Key Scientific Finding:</strong> Unseen per-bit accuracy on <code>0&ndash;100</code> arithmetic reaches <strong>62.8%&ndash;67.3%</strong> (well above the 50.0% random-bit baseline), proving that the spiking reservoir extracts genuine bit-level structure from unseen operands. However, because exact 9-bit integer accuracy requires all nine output bits to be simultaneously correct (<code>0.65<sup>9</sup> &approx; 2.1%</code>), a single plastic readout over a fixed connectome reservoir cannot generalize deep multi-bit carry chains to unseen numbers.
+  <div class="table-wrap">
+    <div class="table-caption">
+      <strong>Table 8:</strong> Generalization stress test across 0&ndash;100 bit-coded arithmetic and small modular/logic tasks (<code>scripts/export_serverless_artifacts.py</code>, 1,024 Kenyon cells).
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Task (Train / Unseen Split)</th>
+          <th class="num">Train Exact Acc</th>
+          <th class="num">Unseen Exact Int Acc</th>
+          <th class="num">Unseen Per-Bit Acc</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">sub_3bit (0&ndash;100, 800 / 200)</td><td class="num">8.5%</td><td class="num">2.5%</td><td class="num">67.3%</td></tr>
+        <tr><td class="mono">add_3bit (0&ndash;100, 800 / 200)</td><td class="num">6.2%</td><td class="num">1.0%</td><td class="num">62.8%</td></tr>
+        <tr><td class="mono">mod_add (mod 7, 37 / 12)</td><td class="num">100.0%</td><td class="num">0.0%</td><td class="num">&mdash;</td></tr>
+        <tr><td class="mono">delayed_xor (3 / 1)</td><td class="num">100.0%</td><td class="num">0.0%</td><td class="num">&mdash;</td></tr>
+      </tbody>
+    </table>
   </div>
 
-  <div class="figure-card">
-    <svg viewBox="0 0 760 185" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;background:#0D121D;border-radius:6px;">
-      <text x="16" y="22" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="9">Control Baselines, Lesion Recovery (delayed_xor) &amp; 0-100 Unseen Accuracy</text>
-      <!-- Left: delayed_xor -->
-      <text x="16" y="48" fill="#CBD5E1" font-family="JetBrains Mono, monospace" font-size="8.2">Real Fly R-STDP</text>
-      <rect x="175" y="38" width="140" height="12" rx="2" fill="#818CF8"/>
-      <text x="322" y="48" fill="#E2E8F0" font-family="JetBrains Mono, monospace" font-size="8.2">70.0%</text>
+  <div class="figure-wrap">
+    <div class="figure-box">
+      <svg viewBox="0 0 740 170" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;background:#FFFFFF;">
+        <text x="12" y="18" fill="#111111" font-family="Georgia, serif" font-size="9" font-weight="700">(a) Delayed XOR Controls &amp; Lesion Recovery</text>
+        <text x="415" y="18" fill="#111111" font-family="Georgia, serif" font-size="9" font-weight="700">(b) 0-100 Unseen Per-Bit vs. Exact Integer</text>
 
-      <text x="16" y="68" fill="#CBD5E1" font-family="JetBrains Mono, monospace" font-size="8.2">Real Fly REINFORCE</text>
-      <rect x="175" y="58" width="120" height="12" rx="2" fill="#38BDF8"/>
-      <text x="302" y="68" fill="#E2E8F0" font-family="JetBrains Mono, monospace" font-size="8.2">60.0%</text>
+        <!-- Left chart -->
+        <text x="12" y="46" fill="#222222" font-family="Consolas, monospace" font-size="8">Real Fly R-STDP</text>
+        <rect x="165" y="36" width="126" height="11" fill="#222222"/>
+        <text x="297" y="45" fill="#111111" font-family="Consolas, monospace" font-size="8">70.0%</text>
 
-      <text x="16" y="88" fill="#CBD5E1" font-family="JetBrains Mono, monospace" font-size="8.2">Matched PyTorch GRU</text>
-      <rect x="175" y="78" width="80" height="12" rx="2" fill="#F87171"/>
-      <text x="262" y="88" fill="#F87171" font-family="JetBrains Mono, monospace" font-size="8.2">40.0%</text>
+        <text x="12" y="66" fill="#222222" font-family="Consolas, monospace" font-size="8">Real Fly REINFORCE</text>
+        <rect x="165" y="56" width="108" height="11" fill="#666666"/>
+        <text x="279" y="65" fill="#111111" font-family="Consolas, monospace" font-size="8">60.0%</text>
 
-      <text x="16" y="108" fill="#FBBF24" font-family="JetBrains Mono, monospace" font-size="8.2">CX Lesion (Immed.)</text>
-      <rect x="175" y="98" width="4" height="12" rx="1" fill="#F87171"/>
-      <text x="186" y="108" fill="#F87171" font-family="JetBrains Mono, monospace" font-size="8.2">0.0% (collapse)</text>
+        <text x="12" y="86" fill="#222222" font-family="Consolas, monospace" font-size="8">Matched PyTorch GRU</text>
+        <rect x="165" y="76" width="72" height="11" fill="#AAAAAA"/>
+        <text x="243" y="85" fill="#111111" font-family="Consolas, monospace" font-size="8">40.0%</text>
 
-      <text x="16" y="128" fill="#4ADE80" font-family="JetBrains Mono, monospace" font-size="8.2">CX Lesion (Recov.)</text>
-      <rect x="175" y="118" width="200" height="12" rx="2" fill="#4ADE80"/>
-      <text x="382" y="128" fill="#4ADE80" font-family="JetBrains Mono, monospace" font-size="8.2">100.0%</text>
+        <text x="12" y="106" fill="#222222" font-family="Consolas, monospace" font-size="8">CX Lesion (Immed.)</text>
+        <rect x="165" y="96" width="2" height="11" fill="#111111"/>
+        <text x="174" y="105" fill="#111111" font-family="Consolas, monospace" font-size="8">0.0% (collapse)</text>
 
-      <!-- Divider -->
-      <line x1="435" y1="34" x2="435" y2="148" stroke="#1E293B" stroke-width="1.2"/>
+        <text x="12" y="126" fill="#222222" font-family="Consolas, monospace" font-size="8">CX Lesion (Recov.)</text>
+        <rect x="165" y="116" width="180" height="11" fill="#111111"/>
+        <text x="351" y="125" fill="#111111" font-family="Consolas, monospace" font-size="8" font-weight="700">100.0%</text>
 
-      <!-- Right: 0-100 Generalization -->
-      <text x="452" y="48" fill="#CBD5E1" font-family="JetBrains Mono, monospace" font-size="8.2">sub_3bit Per-Bit</text>
-      <rect x="575" y="38" width="121" height="12" rx="2" fill="#4ADE80"/>
-      <text x="702" y="48" fill="#4ADE80" font-family="JetBrains Mono, monospace" font-size="8.2">67.3%</text>
+        <line x1="396" y1="28" x2="396" y2="145" stroke="#CCCCCC" stroke-width="0.8"/>
 
-      <text x="452" y="68" fill="#CBD5E1" font-family="JetBrains Mono, monospace" font-size="8.2">add_3bit Per-Bit</text>
-      <rect x="575" y="58" width="113" height="12" rx="2" fill="#FBBF24"/>
-      <text x="694" y="68" fill="#FBBF24" font-family="JetBrains Mono, monospace" font-size="8.2">62.8%</text>
+        <!-- Right chart -->
+        <text x="415" y="46" fill="#222222" font-family="Consolas, monospace" font-size="8">sub_3bit Per-Bit</text>
+        <rect x="548" y="36" width="121" height="11" fill="#222222"/>
+        <text x="675" y="45" fill="#111111" font-family="Consolas, monospace" font-size="8">67.3%</text>
 
-      <text x="452" y="88" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="8.2">Chance Baseline</text>
-      <rect x="575" y="78" width="90" height="12" rx="2" fill="#475569"/>
-      <text x="672" y="88" fill="#94A3B8" font-family="JetBrains Mono, monospace" font-size="8.2">50.0%</text>
+        <text x="415" y="66" fill="#222222" font-family="Consolas, monospace" font-size="8">add_3bit Per-Bit</text>
+        <rect x="548" y="56" width="113" height="11" fill="#555555"/>
+        <text x="667" y="65" fill="#111111" font-family="Consolas, monospace" font-size="8">62.8%</text>
 
-      <text x="452" y="108" fill="#CBD5E1" font-family="JetBrains Mono, monospace" font-size="8.2">sub_3bit Exact Int</text>
-      <rect x="575" y="98" width="6" height="12" rx="1" fill="#818CF8"/>
-      <text x="588" y="108" fill="#818CF8" font-family="JetBrains Mono, monospace" font-size="8.2">2.5%</text>
+        <text x="415" y="86" fill="#555555" font-family="Consolas, monospace" font-size="8">Chance Baseline</text>
+        <rect x="548" y="76" width="90" height="11" fill="#CCCCCC" stroke="#666666" stroke-width="0.6" stroke-dasharray="2,2"/>
+        <text x="644" y="85" fill="#555555" font-family="Consolas, monospace" font-size="8">50.0%</text>
 
-      <text x="452" y="128" fill="#CBD5E1" font-family="JetBrains Mono, monospace" font-size="8.2">add_3bit Exact Int</text>
-      <rect x="575" y="118" width="4" height="12" rx="1" fill="#818CF8"/>
-      <text x="586" y="128" fill="#818CF8" font-family="JetBrains Mono, monospace" font-size="8.2">1.0%</text>
+        <text x="415" y="106" fill="#222222" font-family="Consolas, monospace" font-size="8">sub_3bit Exact Int</text>
+        <rect x="548" y="96" width="5" height="11" fill="#111111"/>
+        <text x="559" y="105" fill="#111111" font-family="Consolas, monospace" font-size="8">2.5%</text>
 
-      <text x="16" y="168" fill="#64748B" font-family="Inter, sans-serif" font-size="8.2">Left: Working-memory recovery on delayed_xor. Right: Unseen bit-level generalization vs. 9-bit exact integer bottleneck on 0-100.</text>
-    </svg>
-    <div class="caption">
-      <strong>Figure 4:</strong> Quantitative comparison of working-memory plasticity, Central Complex lesion recovery, and the bit-vs-integer generalization gap on 200 unseen <code>0&ndash;100</code> pairs.
+        <text x="415" y="126" fill="#222222" font-family="Consolas, monospace" font-size="8">add_3bit Exact Int</text>
+        <rect x="548" y="116" width="2.5" height="11" fill="#111111"/>
+        <text x="557" y="125" fill="#111111" font-family="Consolas, monospace" font-size="8">1.0%</text>
+
+        <line x1="12" y1="148" x2="728" y2="148" stroke="#E0E0E0" stroke-width="0.8"/>
+        <text x="12" y="162" fill="#444444" font-family="Georgia, serif" font-size="8.2" font-style="italic">All metrics reflect strict held-out evaluation splits without operand overlap.</text>
+      </svg>
+    </div>
+    <div class="figure-caption">
+      <strong>Figure 3:</strong> Empirical summary of (a) working-memory baselines and Central Complex lesion recovery on <code>delayed_xor</code>, and (b) the divergence between unseen per-bit accuracy (62.8%&ndash;67.3%) and exact 9-bit integer accuracy (1.0%&ndash;2.5%) on 200 unseen 0&ndash;100 arithmetic pairs.
     </div>
   </div>
 
-  <!-- 7. PRODUCTION SERVERLESS DEPLOYMENT & INTERACTIVE WEB SYSTEM -->
-  <h2><span class="sec-num">7.</span>Production Serverless Deployment &amp; Interactive Visualization</h2>
+  <div class="remark">
+    <strong>Empirical Interpretation:</strong> Unseen per-bit accuracy on 0&ndash;100 arithmetic rises well above the 50.0% random-bit baseline (62.8% for addition, 67.3% for subtraction), confirming that the spiking reservoir extracts genuine bit-level structure from unseen inputs. However, because exact 9-bit integer accuracy requires all nine output bits to be simultaneously correct (0.65<sup>9</sup> &approx; 2.1%), a single plastic readout over a fixed biological reservoir cannot generalize deep multi-bit carry chains to arbitrary unseen integers.
+  </div>
 
-  <h3>7.1 Vercel Serverless Constraints &amp; Pure-NumPy CSR Kernel</h3>
+  <!-- 7. PRODUCTION SERVERLESS ARCHITECTURE -->
+  <h2>7. Production Serverless Architecture and Live Interface</h2>
+
+  <h3>7.1 Vercel Serverless Constraints and Pure-NumPy CSR Kernel</h3>
   <p>
-    Deploying an interactive connectome simulator on Vercel Serverless Functions imposes a strict <code>&lt; 250 MB</code> unzipped bundle limit (precluding PyTorch and CUDA runtimes). To satisfy this constraint without sacrificing real biological topology, <code>scripts/export_serverless_artifacts.py</code> extracts the induced <strong>3,000-landmark dorsal subnetwork</strong> containing <strong>61,453</strong> directed edges and exports it alongside the trained 1,024-Kenyon-cell weights into <code>artifacts/serverless/subnetwork.npz</code> (<strong>4.13 MB</strong>) and <code>layout_and_summary.json</code> (<strong>290.5 KB</strong>).
+    Deploying an interactive connectome application on Vercel Serverless Functions requires keeping the unzipped Python bundle strictly below 250 MB, which precludes PyTorch and CUDA binaries. Accordingly, <code>scripts/export_serverless_artifacts.py</code> extracts the induced <strong>3,000-landmark</strong> dorsal subnetwork containing <strong>61,453</strong> directed edges and exports it alongside trained 1,024-Kenyon-cell weights into <code>artifacts/serverless/subnetwork.npz</code> (<strong>4.13 MB</strong>) and <code>layout_and_summary.json</code> (<strong>290.5 KB</strong>).
   </p>
   <p>
-    At runtime, <code>api/index.py</code> loads the compressed CSR arrays into <code>ServerlessBrainEngine</code> and executes LIF propagation using pure-NumPy <code>np.bincount(W_indices, weights=W_data * active_spikes, minlength=n)</code>. All API inputs are validated with strict Pydantic v2 models (<code>SolveRequest</code>, <code>FeedbackRequest</code>, <code>TrainStepRequest</code>, <code>LesionRequest</code>, <code>ResetRequest</code>), returning HTTP <code>422 Unprocessable Entity</code> on out-of-range operands (e.g., <code>a &gt; 100</code> or <code>a &gt; 1</code> for <code>delayed_xor</code>).
+    At runtime, <code>api/index.py</code> loads these CSR arrays into <code>ServerlessBrainEngine</code> using only <code>fastapi</code>, <code>numpy</code>, <code>scipy</code>, and <code>pydantic</code>, executing sparse synaptic propagation via <code>np.bincount(W_indices, weights=W_data * active_spikes, minlength=n)</code>. Strict Pydantic v2 validators enforce task-specific operand ranges, returning HTTP <code>422 Unprocessable Entity</code> on out-of-range requests. Table 9 documents the production REST API contract.
   </p>
 
-  <table>
-    <thead>
-      <tr>
-        <th>HTTP Endpoint</th>
-        <th>Method</th>
-        <th>Request / Validation Contract</th>
-        <th>Serverless Action &amp; Response</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="mono">/api/health</td>
-        <td class="mono">GET</td>
-        <td>None</td>
-        <td>Returns runtime status, subnetwork neuron/edge counts</td>
-      </tr>
-      <tr>
-        <td class="mono">/api/brain/state</td>
-        <td class="mono">GET</td>
-        <td>None</td>
-        <td>Returns 3,000 landmarks, active lesions, <code>total_weight_shift</code></td>
-      </tr>
-      <tr>
-        <td class="mono">/api/brain/solve</td>
-        <td class="mono">POST</td>
-        <td class="mono">task, a &isin; [0,100], b &isin; [0,100]</td>
-        <td>Runs 60 ms LIF trial, returns top-4 votes &amp; spike events</td>
-      </tr>
-      <tr>
-        <td class="mono">/api/brain/feedback</td>
-        <td class="mono">POST</td>
-        <td class="mono">reward &isin; {+1, -1}</td>
-        <td>Applies R-STDP + taboo update, shifts subsequent predictions</td>
-      </tr>
-      <tr>
-        <td class="mono">/api/brain/train_step</td>
-        <td class="mono">POST</td>
-        <td class="mono">task, episodes &isin; [1, 50]</td>
-        <td>Executes N online R-STDP episodes, returns accuracy curve</td>
-      </tr>
-      <tr>
-        <td class="mono">/api/brain/lesion</td>
-        <td class="mono">POST</td>
-        <td class="mono">mushroom_body, central_complex, hub_top_5pct</td>
-        <td>Toggles boolean <code>active_mask</code> on target populations</td>
-      </tr>
-      <tr>
-        <td class="mono">/api/brain/reset</td>
-        <td class="mono">POST</td>
-        <td class="mono">mode &isin; {checkpoint, fresh, shuffled}</td>
-        <td>Restores trained weights, zeros readout, or rewires edges</td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-wrap">
+    <div class="table-caption">
+      <strong>Table 9:</strong> Production FastAPI serverless endpoints and validation contracts in <code>api/index.py</code>.
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Endpoint</th>
+          <th>Method</th>
+          <th>Validation Contract</th>
+          <th>Runtime Behavior</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">/api/health</td><td class="mono">GET</td><td>None</td><td>Reports service readiness and subnetwork counts</td></tr>
+        <tr><td class="mono">/api/brain/state</td><td class="mono">GET</td><td>None</td><td>Returns 3,000 landmarks, active lesions, weight shift</td></tr>
+        <tr><td class="mono">/api/brain/solve</td><td class="mono">POST</td><td class="mono">task, a &isin; [0,100], b &isin; [0,100]</td><td>Runs 60 ms LIF trial, returns top-4 votes &amp; spikes</td></tr>
+        <tr><td class="mono">/api/brain/feedback</td><td class="mono">POST</td><td class="mono">reward &isin; {+1, &minus;1}</td><td>Applies R-STDP + taboo update, shifts next trial</td></tr>
+        <tr><td class="mono">/api/brain/train_step</td><td class="mono">POST</td><td class="mono">task, episodes &isin; [1, 50]</td><td>Runs N online episodes, returns accuracy history</td></tr>
+        <tr><td class="mono">/api/brain/lesion</td><td class="mono">POST</td><td class="mono">mushroom_body, central_complex, hub_top_5pct</td><td>Updates boolean <code>active_mask</code> on target pools</td></tr>
+        <tr><td class="mono">/api/brain/reset</td><td class="mono">POST</td><td class="mono">mode &isin; {checkpoint, fresh, shuffled}</td><td>Restores checkpoint, zeros readout, or rewires CSR</td></tr>
+      </tbody>
+    </table>
+  </div>
 
-  <h3>7.2 Progressive-Disclosure React + TypeScript Frontend</h3>
+  <h3>7.2 Interactive React Frontend and 60 FPS Canvas Visualization</h3>
   <p>
-    The frontend (<code>frontend/src/App.tsx</code>) replaces dense engineering dashboards with a clean three-tab progressive-disclosure workflow styled in the same dark-obsidian palette:
+    The React + TypeScript frontend (<code>frontend/src/App.tsx</code>) organizes the user workflow into three progressive-disclosure tabs routed over same-origin <code>/api/*</code> endpoints via <code>vercel.json</code>:
   </p>
   <ul>
-    <li><strong>Play &amp; Train (<code>QuizRewardPanel.tsx</code> &amp; <code>BrainCanvas2D.tsx</code>):</strong> Displays a live equation banner, spinner-free <code>0&ndash;100</code> keyboard-friendly operand inputs, a 60 FPS anatomical dorsal neuropil Canvas rendering glowing spike trails and green/red dopamine ripples, top-4 candidate prediction votes, and cumulative <code>Total Weight Shift</code>.</li>
-    <li><strong>Brain Damage Lab (<code>LesionPanel.tsx</code>):</strong> Provides one-click lesion toggles for the Mushroom Body, Central Complex, and Top-5% Hub neurons with grayscale/crimson cross-hatching on silenced regions and before/after prediction comparison.</li>
-    <li><strong>Science &amp; Benchmarks (<code>BenchmarkPanel.tsx</code>):</strong> Presents the DuckDB region statistics, hardware throughput comparison, control baselines, and <code>0&ndash;100</code> generalization stress-test metrics.</li>
+    <li><strong>Play &amp; Train (<code>QuizRewardPanel.tsx</code>, <code>BrainCanvas2D.tsx</code>):</strong> Presents a live equation banner, spinner-free keyboard inputs for 0&ndash;100 operands, a 60 FPS anatomical dorsal Canvas rendering active spike trails and dopamine/punishment ripples over the 3,000 landmarks, top-4 candidate prediction votes, and cumulative <code>Total Weight Shift</code>.</li>
+    <li><strong>Brain Damage Lab (<code>LesionPanel.tsx</code>):</strong> Exposes one-click lesion toggles for the Mushroom Body, Central Complex, and Top-5% Hub neurons with visual cross-hatching on silenced regions and before/after prediction comparisons.</li>
+    <li><strong>Science &amp; Benchmarks (<code>BenchmarkPanel.tsx</code>):</strong> Displays DuckDB region statistics, hardware throughput benchmarks, control baselines, and 0&ndash;100 unseen generalization metrics directly in the browser.</li>
   </ul>
 
-  <h3>7.3 Vercel Deployment Manifest &amp; 60 FPS Canvas Pipeline</h3>
+  <!-- 8. VERIFICATION AND PRIVACY COMPLIANCE -->
+  <h2>8. Verification, Automated Testing, and Privacy Compliance</h2>
   <p>
-    Production routing in <code>vercel.json</code> serves the compiled Vite static bundle while forwarding <code>/api/(.*)</code> to <code>api/index.py</code> over a slim dependency manifest (<code>requirements.txt</code>: <code>fastapi</code>, <code>numpy</code>, <code>scipy</code>, <code>pydantic</code>), excluding PyTorch, DuckDB, and raw FlyWire Parquet files via <code>.vercelignore</code>. On the client, <code>BrainCanvas2D.tsx</code> renders the 3,000 dorsal landmarks at 60 FPS using <code>requestAnimationFrame</code>, applying exponential alpha decay to active spike trails across the 60 ms trial timeline, radial green (<code>+1</code>) or crimson (<code>&minus;1</code>) dopamine wave overlays upon user feedback, and diagonal cross-hatching over lesioned neuropils.
+    Every stage of the pipeline—from DuckDB ingestion and Dale's Law sign preservation to serverless HTTP 422 validation and React UI rendering—is verified by automated tests (Table 10). Following the 0&ndash;100 bit-coded expansion and UI refinements, all <strong>13/13</strong> backend <code>pytest</code> tests, the frontend Vitest suite, and the TypeScript/Vite production build passed without errors. Furthermore, all hardware identifiers in code artifacts and documentation were standardized to generic labels (<code>local_cpu</code>, <code>local_gpu</code>, <code>cloud_gpu</code>, <code>serverless_cpu</code>) to prevent disclosure of local hostnames, operating system versions, or hardware models.
   </p>
 
-  <!-- 8. VERIFICATION, AUTOMATED TESTS & PRIVACY COMPLIANCE -->
-  <h2><span class="sec-num">8.</span>Verification, Automated Test Suite &amp; Privacy Compliance</h2>
+  <div class="table-wrap">
+    <div class="table-caption">
+      <strong>Table 10:</strong> Automated verification suite across backend simulation, serverless API, and React frontend.
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Test Suite / Build Check</th>
+          <th>Verified Properties</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">tests/test_phase1.py</td><td>DuckDB/Parquet schema, CSR integrity, LIF membrane &amp; refractory period</td><td class="mono">Passed</td></tr>
+        <tr><td class="mono">tests/test_phase2.py</td><td>Dual-rail spike encoding, 3-factor R-STDP, Dale's Law sign clamping</td><td class="mono">Passed</td></tr>
+        <tr><td class="mono">tests/test_phase3.py</td><td>Degree-preserving shuffling, GRU baseline, regional/hub lesion masks</td><td class="mono">Passed</td></tr>
+        <tr><td class="mono">tests/test_serverless_api.py</td><td>REST endpoints, 0&ndash;100 Pydantic HTTP 422 validation, live reward shift</td><td class="mono">13/13 Passed</td></tr>
+        <tr><td class="mono">frontend (Vitest + vite build)</td><td>3-tab UI rendering, spinner-free inputs, API client, production bundle</td><td class="mono">Passed</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 9. LIMITATIONS AND CONCLUSION -->
+  <h2>9. Limitations and Conclusion</h2>
   <p>
-    Every pipeline stage—from CSR loading and Dale's Law clamping to serverless HTTP 422 validation and React UI interactions—is covered by automated tests. After the final <code>0&ndash;100</code> expansion and UI updates, all <strong>13/13</strong> backend <code>pytest</code> cases, the frontend Vitest suite, and the TypeScript/Vite production build passed cleanly. In addition, all hardware labels in both code artifacts and this report were scrubbed to standardized identifiers (<code>local_cpu</code>, <code>local_gpu</code>, <code>cloud_gpu</code>, <code>serverless_cpu</code>) to ensure zero leakage of hostnames, OS builds, or hardware serials.
+    This study models neurons as single-compartment Leaky Integrate-and-Fire units without dendritic nonlinearities, voltage-gated ion channel dynamics, or multi-layer surrogate-gradient backpropagation across the 138,639-neuron graph. In addition, the live Vercel serverless deployment executes a 3,000-landmark induced dorsal subnetwork rather than the complete 15.09M-edge GPU connectome.
+  </p>
+  <p>
+    Within these explicit scientific boundaries, the project provides a reproducible, transparent testbed for whole-brain spiking computation: a real <em>Drosophila</em> connectome accelerated 12.1&times; on GPU can acquire small discrete associations via dopamine-modulated R-STDP and recover from targeted Central Complex lesions through plastic rerouting, while clearly delineating where biological reservoir computing diverges from exact multi-bit digital arithmetic.
   </p>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Test Suite / Command</th>
-        <th>Scope Verified</th>
-        <th>Outcome</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="mono">tests/test_phase1.py</td>
-        <td>DuckDB/Parquet schema, CSR integrity, LIF membrane &amp; refractory dynamics</td>
-        <td class="mono c-green">Passed</td>
-      </tr>
-      <tr>
-        <td class="mono">tests/test_phase2.py</td>
-        <td>Population spike encoding, 3-factor R-STDP, Dale's Law sign preservation</td>
-        <td class="mono c-green">Passed</td>
-      </tr>
-      <tr>
-        <td class="mono">tests/test_phase3.py</td>
-        <td>Degree-preserving graph shuffling, GRU baseline, lesion mask silencing</td>
-        <td class="mono c-green">Passed</td>
-      </tr>
-      <tr>
-        <td class="mono">tests/test_serverless_api.py</td>
-        <td>FastAPI endpoints, <code>0&ndash;100</code> range validation (HTTP 422), live reward shift</td>
-        <td class="mono c-green">13/13 pytest Passed</td>
-      </tr>
-      <tr>
-        <td class="mono">frontend (Vitest + vite build)</td>
-        <td>3-tab UI rendering, spinner-free inputs, API client &amp; production bundle</td>
-        <td class="mono c-green">Passed</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <!-- 9. LIMITATIONS & CONCLUSION -->
-  <h2><span class="sec-num">9.</span>Limitations, Biological Divergence &amp; Conclusion</h2>
-  <p>
-    This study models neurons as single-compartment Leaky Integrate-and-Fire units without dendritic nonlinearities, voltage-gated ion channel kinetics, or multi-layer surrogate-gradient backpropagation across the 138,639-neuron graph. Moreover, the live Vercel serverless deployment executes a 3,000-landmark induced dorsal subnetwork rather than the full 15.09M-edge GPU connectome. Within these explicitly stated boundaries, the project establishes a reproducible, strictly honest scientific testbed: a real <em>Drosophila</em> connectome accelerated <strong>12.1&times;</strong> on GPU can learn small discrete associations via dopamine-modulated R-STDP and recover from targeted Central Complex lesions, while clearly revealing where biological reservoir computing diverges from exact multi-bit digital arithmetic.
-  </p>
-
-  <!-- 10. REFERENCES -->
-  <h2><span class="sec-num">10.</span>References</h2>
+  <!-- REFERENCES -->
+  <h2>References</h2>
   <div class="refs">
-    <p>[1] Shiu, P. K., Sterne, G. R., Spiller, N., et al. (2024). A <em>Drosophila</em> computational brain model reveals sensorimotor processing. <em>Nature</em>. GitHub: <code>philshiu/Drosophila_brain_model</code>.</p>
-    <p>[2] Dorkenwald, S., Matsliah, A., Yu, S. C., et al. (2024). Neuronal wiring diagram of an adult brain (FlyWire v783). <em>Nature</em>. Annotations: <code>flyconnectome/flywire_annotations</code>.</p>
+    <p>[1] Shiu, P. K., Sterne, G. R., Spiller, N., Franconville, R., Sandoval, A., Zhou, J., Simha, N., Kang, C. H., Yu, S., Kim, J. S., Dorkenwald, S., Matsliah, A., Schlegel, P., Yu, S. C., McKellar, C. E., Sterling, A., Costa, M., Eichler, K., Eichler, A. S., &hellip; Scott, K. (2024). A <em>Drosophila</em> computational brain model reveals sensorimotor processing. <em>Nature</em>. Code: <code>philshiu/Drosophila_brain_model</code>.</p>
+    <p>[2] Dorkenwald, S., Matsliah, A., Yu, S. C., Schlegel, P., Lin, A., Gager, J., Hebditch, M., Silverman, B., Willie, K., Willie, R., &hellip; Seung, H. S. (2024). Neuronal wiring diagram of an adult brain (FlyWire v783). <em>Nature</em>. Annotations: <code>flyconnectome/flywire_annotations</code>.</p>
     <p>[3] Fr&eacute;maux, N., &amp; Gerstner, W. (2016). Neuromodulated spike-timing-dependent plasticity, and theory of three-factor learning rules. <em>Frontiers in Neural Circuits</em>, 9, 85.</p>
     <p>[4] FlyWire Connectome v783 Data Release (2024). <code>Completeness_783.csv</code>, <code>Connectivity_783.parquet</code>, and <code>Supplemental_file1_neuron_annotations.tsv</code>.</p>
   </div>
